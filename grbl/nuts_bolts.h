@@ -51,7 +51,8 @@
 
 #ifdef STM32F103C8
 #define F_CPU SystemCoreClock
-#else if STM32F407xx
+#endif
+#ifdef STM32F407xx
 #define F_CPU SystemCoreClock
 #endif
 

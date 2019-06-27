@@ -42,7 +42,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,9 +57,9 @@
 /* External variables --------------------------------------------------------*/
 extern ETH_HandleTypeDef heth;
 extern UART_HandleTypeDef huart2;
+/* USER CODE BEGIN EV */
 extern uint8_t rx_byte;
 extern void processUARTByte (void);
-/* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
 

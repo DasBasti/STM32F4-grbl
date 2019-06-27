@@ -1232,33 +1232,3 @@ void TIM_Configuration(TIM_TypeDef* TIMER, u16 Period, u16 Prescaler, u8 PP)
 	NVIC_Init(&NVIC_InitStructure);
 }
 #endif
-
-#ifdef STM32F407xx
-void TIM_Configuration(TIM_TypeDef* TIMER, uint16_t Period, uint16_t Prescaler, uint8_t PP)
-{
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
-
-	TIM_TimeBaseStructure.TIM_Period = Period - 1;
-	TIM_TimeBaseStructure.TIM_Prescaler = Prescaler - 1;
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIMER, &TIM_TimeBaseStructure);
-
-	TIM_ClearITPendingBit(TIMER, TIM_IT_Update);
-	TIM_ITConfig(TIMER, TIM_IT_Update, ENABLE);
-	TIM_Cmd(TIMER, ENABLE);
-
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-	if (TIMER == TIM2) { NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn; }
-	else if (TIMER == TIM3) { NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn; }
-	else if (TIMER == TIM4) { NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn; }
-
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = PP;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-}
-#endif
-
-
