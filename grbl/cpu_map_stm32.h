@@ -118,30 +118,30 @@
 #endif // CPU_MAP_STM32F103
 
 #ifdef CPU_MAP_STM32F407
-
+#include "main.h" // Get names defined in cubemx
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
-#define STEP_PORT GPIOB
-#define X_STEP_BIT 0
-#define Y_STEP_BIT 1
-#define Z_STEP_BIT -1
+#define STEP_PORT STP1_STP_GPIO_Port
+#define X_STEP_BIT STP1_STP_Pin
+#define Y_STEP_BIT STP2_STP_Pin
+#define Z_STEP_BIT 0
 #define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT)) // All step bits
 
 // Define step direction output pins. NOTE: All direction pins must be on the same port.
-#define DIRECTION_PORT GPIOA
-#define RCC_DIRECTION_PORT RCC_APB2Periph_GPIOA
-#define X_DIRECTION_BIT 3
-#define Y_DIRECTION_BIT 4
-#define Z_DIRECTION_BIT 5
+#define DIRECTION_PORT STP1_DIR_GPIO_Port
+//#define RCC_DIRECTION_PORT RCC_APB2Periph_GPIOA
+#define X_DIRECTION_BIT STP1_DIR_Pin
+#define Y_DIRECTION_BIT STP2_DIR_Pin
+#define Z_DIRECTION_BIT 0
 #define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT)) // All direction bits
 
 // Define stepper driver enable/disable output pin.
-#define STEPPERS_DISABLE_PORT GPIOA
+/*#define STEPPERS_DISABLE_PORT GPIOA
 #define RCC_STEPPERS_DISABLE_PORT RCC_APB2Periph_GPIOA
 #define STEPPERS_DISABLE_BIT 6
 #define STEPPERS_DISABLE_MASK (1 << STEPPERS_DISABLE_BIT)
 #define SetStepperDisableBit() GPIO_SetBits(STEPPERS_DISABLE_PORT, STEPPERS_DISABLE_MASK)
 #define ResetStepperDisableBit() GPIO_ResetBits(STEPPERS_DISABLE_PORT, STEPPERS_DISABLE_MASK)
-
+*/
 // Define homing/hard limit switch input pins and limit interrupt vectors.
 // NOTE: All limit bit pins must be on the same port
 #define LIMIT_PIN GPIOB

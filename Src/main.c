@@ -274,21 +274,18 @@ static void MX_ETH_Init(void)
 
   /* USER CODE END ETH_Init 0 */
 
-   uint8_t MACAddr[6] ;
-
   /* USER CODE BEGIN ETH_Init 1 */
 
   /* USER CODE END ETH_Init 1 */
   heth.Instance = ETH;
   heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
   heth.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
-  MACAddr[0] = 0x00;
-  MACAddr[1] = 0x80;
-  MACAddr[2] = 0xE1;
-  MACAddr[3] = 0x00;
-  MACAddr[4] = 0x00;
-  MACAddr[5] = 0x00;
-  heth.Init.MACAddr = &MACAddr[0];
+  heth.Init.MACAddr[0] =   0x00;
+  heth.Init.MACAddr[1] =   0x80;
+  heth.Init.MACAddr[2] =   0xE1;
+  heth.Init.MACAddr[3] =   0x00;
+  heth.Init.MACAddr[4] =   0x00;
+  heth.Init.MACAddr[5] =   0x00;
   heth.Init.RxMode = ETH_RXPOLLING_MODE;
   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;
   heth.Init.MediaInterface = ETH_MEDIA_INTERFACE_RMII;
@@ -540,7 +537,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, SPOT_Pin|PAT_L_Pin|HEAD_0_8_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOF, VAC_0_8_Pin|STOPPER_Pin|CVY_M_Pin|SUPPORTER_Pin 
+  HAL_GPIO_WritePin(GPIOF, VAC_08_Pin|STOPPER_Pin|CVY_M_Pin|SUPPORTER_Pin 
                           |LOCATOR_Pin|SP_A_Pin|SP_B_Pin|SP_C_Pin 
                           |SP_D_Pin, GPIO_PIN_RESET);
 
@@ -575,10 +572,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : VAC_0_8_Pin STOPPER_Pin CVY_M_Pin SUPPORTER_Pin 
+  /*Configure GPIO pins : VAC_08_Pin STOPPER_Pin CVY_M_Pin SUPPORTER_Pin 
                            LOCATOR_Pin SP_A_Pin SP_B_Pin SP_C_Pin 
                            SP_D_Pin */
-  GPIO_InitStruct.Pin = VAC_0_8_Pin|STOPPER_Pin|CVY_M_Pin|SUPPORTER_Pin 
+  GPIO_InitStruct.Pin = VAC_08_Pin|STOPPER_Pin|CVY_M_Pin|SUPPORTER_Pin 
                           |LOCATOR_Pin|SP_A_Pin|SP_B_Pin|SP_C_Pin 
                           |SP_D_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -623,10 +620,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(BAD_MARK_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PCB_IN_Pin PCB_DET_Pin TEACH_Pin FAST_Pin 
-                           Y__Pin Y_G5_Pin X__Pin X_G7_Pin 
+                           Y_MINUS_Pin Y_PLUS_Pin X_MINUS_Pin X_PLUS_Pin 
                            DEG_90_Pin */
   GPIO_InitStruct.Pin = PCB_IN_Pin|PCB_DET_Pin|TEACH_Pin|FAST_Pin 
-                          |Y__Pin|Y_G5_Pin|X__Pin|X_G7_Pin 
+                          |Y_MINUS_Pin|Y_PLUS_Pin|X_MINUS_Pin|X_PLUS_Pin 
                           |DEG_90_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;

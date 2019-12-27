@@ -46,14 +46,13 @@
 #if defined (STM32F103C8)
 unsigned char EE_Buffer[0x400];
 #endif
-#ifdef STM32F407xx
-#include <string.h>
-// TODO
-//#include "stm32eeprom.h"
-#include "settings.h"
-#endif
+
 #if defined (STM32F407xx)
+#include <string.h>
+#include "settings.h"
+#include "stm32f4xx_hal.h"
 unsigned char EE_Buffer[0x400];
+
 #endif
 
 
@@ -139,6 +138,9 @@ unsigned char eeprom_get_char( unsigned int addr )
 	return EEDR; // Return the byte read from EEPROM.
 #endif
 #if defined(STM32F103C8)
+	return EE_Buffer[addr];
+#endif
+#if defined(STM32F407xx)
 	return EE_Buffer[addr];
 #endif
 }
