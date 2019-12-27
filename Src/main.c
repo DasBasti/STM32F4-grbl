@@ -49,7 +49,7 @@
 #include "system.h"
 #include "grbl.h"
 
-#include "Print.h"
+#include "print.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
