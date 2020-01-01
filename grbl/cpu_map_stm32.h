@@ -193,6 +193,12 @@ void inline ResetStepperDisableBit() {
 #define CONTROL_Y_PLUS_BIT 5
 #define CONTROL_Y_MINUS_BIT 4
 #define CONTROL_MASK ((1 << CONTROL_FAST_BIT) | (1 << CONTROL_TEACH_BIT) | (1 << CONTROL_X_PLUS_BIT) | (1 << CONTROL_X_MINUS_BIT) | (1 << CONTROL_Y_PLUS_BIT) | (1 << CONTROL_Y_MINUS_BIT))
+// unused information
+#define CONTROL_RESET_BIT 31
+#define CONTROL_FEED_HOLD_BIT 30
+#define CONTROL_CYCLE_START_BIT 29
+//#define CONTROL_SAFETY_DOOR_BIT 28
+
 
 // Define probe switch input pin.
 #define PROBE_PORT GPIOA

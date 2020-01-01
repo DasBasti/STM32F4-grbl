@@ -103,7 +103,7 @@
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
 						<entry excluding="main2.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Src"/>
-						<entry excluding="spindle_control.c|probe.c|main.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="grbl"/>
+						<entry excluding="main.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="grbl"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="startup"/>
 					</sourceEntries>
 				</configuration>

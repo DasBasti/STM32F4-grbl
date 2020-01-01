@@ -74,8 +74,9 @@ void _delay_us(uint32_t x);
 typedef int bool;
 //#define NOEEPROMSUPPORT
 #define printPgmString printString
-#define GPIO_ReadInputData(PORT) (uint16_t)PORT->IDR & 0xffff
-#define GPIO_ReadOutputData(PORT) (uint16_t)PORT->ODR & 0xffff
+// TODO: (basneu) Read and Write GPIOS from STEPDIR value
+//#define GPIO_ReadInputData(PORT) (uint16_t)PORT->IDR & 0xffff
+//#define GPIO_ReadOutputData(PORT) (uint16_t)PORT->ODR & 0xffff
 
 #endif
 

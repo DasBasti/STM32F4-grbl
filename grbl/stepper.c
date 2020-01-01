@@ -53,20 +53,20 @@ const PORTPINDEF step_pin_mask[N_AXIS] =
 {
 	1 << X_STEP_BIT,
 	1 << Y_STEP_BIT,
-	1 << Z_STEP_BIT,
-
+	1 << A_STEP_BIT,
+	1 << B_STEP_BIT,
 };
 const PORTPINDEF direction_pin_mask[N_AXIS] =
 {
 	1 << X_DIRECTION_BIT,
 	1 << Y_DIRECTION_BIT,
-	1 << Z_DIRECTION_BIT,
+	1 << A_DIRECTION_BIT,
+	1 << B_DIRECTION_BIT,
 };
 const PORTPINDEF limit_pin_mask[N_AXIS] =
 {
 	1 << X_LIMIT_BIT,
 	1 << Y_LIMIT_BIT,
-	1 << Z_LIMIT_BIT,
 };
 
 // Define Adaptive Multi-Axis Step-Smoothing(AMASS) levels and cutoff frequencies. The highest level
@@ -131,7 +131,8 @@ typedef struct {
   // Used by the bresenham line algorithm
   uint32_t counter_x,        // Counter variables for the bresenham line tracer
            counter_y,
-           counter_z;
+           counter_a,
+		   counter_b;
   #ifdef STEP_PULSE_DELAY
     uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
   #endif
@@ -386,7 +387,7 @@ void st_go_idle()
 void TIM2_IRQHandler(void)
 #endif
 #ifdef STM32F407xx
-void TIM2_IRQHandler(void)
+void grbl_TIM2_IRQHandler(void)
 #endif
 #ifdef AVRTARGET
 ISR(TIMER1_COMPA_vect)
@@ -475,7 +476,7 @@ ISR(TIMER1_COMPA_vect)
         st.exec_block = &st_block_buffer[st.exec_block_index];
 
         // Initialize Bresenham line and distance counters
-        st.counter_x = st.counter_y = st.counter_z = (st.exec_block->step_event_count >> 1);
+        st.counter_x = st.counter_y = st.counter_a = (st.exec_block->step_event_count >> 1);
       }
       st.dir_outbits = st.exec_block->direction_bits ^ dir_port_invert_mask;
 
@@ -483,7 +484,8 @@ ISR(TIMER1_COMPA_vect)
         // With AMASS enabled, adjust Bresenham axis increment counters according to AMASS level.
         st.steps[X_AXIS] = st.exec_block->steps[X_AXIS] >> st.exec_segment->amass_level;
         st.steps[Y_AXIS] = st.exec_block->steps[Y_AXIS] >> st.exec_segment->amass_level;
-        st.steps[Z_AXIS] = st.exec_block->steps[Z_AXIS] >> st.exec_segment->amass_level;
+        st.steps[A_AXIS] = st.exec_block->steps[A_AXIS] >> st.exec_segment->amass_level;
+        st.steps[B_AXIS] = st.exec_block->steps[B_AXIS] >> st.exec_segment->amass_level;
       #endif
 
       #ifdef VARIABLE_SPINDLE
@@ -534,15 +536,22 @@ ISR(TIMER1_COMPA_vect)
     else { sys_position[Y_AXIS]++; }
   }
   #ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-    st.counter_z += st.steps[Z_AXIS];
+    st.counter_a += st.steps[Z_AXIS];
   #else
-    st.counter_z += st.exec_block->steps[Z_AXIS];
+    st.counter_a += st.exec_block->steps[A_AXIS];
+    st.counter_b += st.exec_block->steps[B_AXIS];
   #endif
-  if (st.counter_z > st.exec_block->step_event_count) {
-    st.step_outbits |= (1<<Z_STEP_BIT);
-    st.counter_z -= st.exec_block->step_event_count;
-    if (st.exec_block->direction_bits & (1<<Z_DIRECTION_BIT)) { sys_position[Z_AXIS]--; }
-    else { sys_position[Z_AXIS]++; }
+  if (st.counter_a > st.exec_block->step_event_count) {
+    st.step_outbits |= (1<<A_STEP_BIT);
+    st.counter_a -= st.exec_block->step_event_count;
+    if (st.exec_block->direction_bits & (1<<A_DIRECTION_BIT)) { sys_position[A_AXIS]--; }
+    else { sys_position[A_AXIS]++; }
+  }
+  if (st.counter_b > st.exec_block->step_event_count) {
+    st.step_outbits |= (1<<B_STEP_BIT);
+    st.counter_b -= st.exec_block->step_event_count;
+    if (st.exec_block->direction_bits & (1<<B_DIRECTION_BIT)) { sys_position[B_AXIS]--; }
+    else { sys_position[B_AXIS]++; }
   }
 
   // During a homing cycle, lock out and prevent desired axes from moving.
@@ -656,9 +665,9 @@ void st_reset()
   GPIO_Write(DIRECTION_PORT, (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK));
 #endif
 #ifdef STM32F407xx
-  //TODO
-  STEP_PORT->ODR = (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
-  DIRECTION_PORT->ODR = (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK);
+  //TODO (basneu) Write step and dir informations to GPIOs on real hardware
+  //STEP_PORT->ODR = (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
+  //DIRECTION_PORT->ODR = (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK);
 #endif
 }
 

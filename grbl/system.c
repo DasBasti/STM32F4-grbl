@@ -80,7 +80,8 @@ uint8_t system_control_get_state()
   uint16_t pin= GPIO_ReadInputData(CONTROL_PIN_PORT);
 #endif
 #ifdef STM32F407xx
-  uint16_t pin= GPIO_ReadInputData(CONTROL_PIN_PORT);
+  // TODO: (basneu) read input values from CONTROL Port
+  uint16_t pin= 0;
 #endif
   #ifdef INVERT_CONTROL_PIN_MASK
     pin ^= INVERT_CONTROL_PIN_MASK;
