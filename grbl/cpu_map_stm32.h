@@ -161,15 +161,14 @@ void inline ResetStepperDisableBit() {
 
 // Define user-control controls (cycle start, reset, feed hold) input pins.
 // NOTE: All CONTROLs pins must be on the same port and not on a port with other input pins (limits).
-#define CONTROL_PIN_PORT GPIOB
-#define CONTROL_PORT GPIOB
-#define RCC_CONTROL_PORT RCC_APB2Periph_GPIOB
-#define GPIO_CONTROL_PORT GPIO_PortSourceGPIOB
-#define CONTROL_RESET_BIT 5
-#define CONTROL_FEED_HOLD_BIT 6
-#define CONTROL_CYCLE_START_BIT 7
-#define CONTROL_SAFETY_DOOR_BIT 8
-#define CONTROL_MASK ((1 << CONTROL_RESET_BIT) | (1 << CONTROL_FEED_HOLD_BIT) | (1 << CONTROL_CYCLE_START_BIT) | (1 << CONTROL_SAFETY_DOOR_BIT))
+#define CONTROL_PIN_PORT GPIOG
+#define CONTROL_FAST_BIT 3
+#define CONTROL_TEACH_BIT 2
+#define CONTROL_X_PLUS_BIT 7
+#define CONTROL_X_MINUS_BIT 6
+#define CONTROL_Y_PLUS_BIT 5
+#define CONTROL_Y_MINUS_BIT 4
+#define CONTROL_MASK ((1 << CONTROL_FAST_BIT) | (1 << CONTROL_TEACH_BIT) | (1 << CONTROL_X_PLUS_BIT) | (1 << CONTROL_X_MINUS_BIT) | (1 << CONTROL_Y_PLUS_BIT) | (1 << CONTROL_Y_MINUS_BIT))
 
 // Define probe switch input pin.
 #define PROBE_PORT GPIOA
