@@ -189,7 +189,7 @@ void inline ResetStepperDisableBit() {
 //   15     PROBE_BIT
 
 // NOTE: We include inline functions to convert from the hardware interface that grbl expects to one that is available in the machine
-void inline
+
 
 #endif // CPU_MAP_STM32F103
 
