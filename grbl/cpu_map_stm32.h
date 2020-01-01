@@ -170,12 +170,6 @@ void inline ResetStepperDisableBit() {
 #define CONTROL_Y_MINUS_BIT 4
 #define CONTROL_MASK ((1 << CONTROL_FAST_BIT) | (1 << CONTROL_TEACH_BIT) | (1 << CONTROL_X_PLUS_BIT) | (1 << CONTROL_X_MINUS_BIT) | (1 << CONTROL_Y_PLUS_BIT) | (1 << CONTROL_Y_MINUS_BIT))
 
-// Define probe switch input pin.
-#define PROBE_PORT GPIOA
-#define RCC_PROBE_PORT RCC_APB2Periph_GPIOA
-#define PROBE_BIT 15
-#define PROBE_MASK (1 << PROBE_BIT)
-
 // Start of PWM & Stepper Enabled Spindle
 #ifdef VARIABLE_SPINDLE
 
