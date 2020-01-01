@@ -60,7 +60,7 @@
 #define F_CPU SystemCoreClock
 #endif
 #ifdef STM32F407xx
-#define F_CPU SystemCoreClock
+#define F_CPU HAL_RCC_GetHCLKFreq()
 #endif
 
 #define DELAY_MODE_DWELL       0

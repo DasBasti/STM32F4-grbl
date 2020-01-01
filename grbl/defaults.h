@@ -488,7 +488,7 @@
   #define DEFAULT_HOMING_PULLOFF 1.0 // mm
 #endif
 
-#ifdef DEFAULT_CNC3020
+#ifdef DEFAULT_PLACEMAT
 #define DEFAULT_X_STEPS_PER_MM 400.0f
 #define DEFAULT_Y_STEPS_PER_MM 400.0f
 #define DEFAULT_A_STEPS_PER_MM 400.0f
@@ -505,8 +505,6 @@
 #define DEFAULT_Y_MAX_TRAVEL 300.0f // mm NOTE: Must be a positive value.
 #define DEFAULT_A_MAX_TRAVEL 50.0f // mm NOTE: Must be a positive value.
 #define DEFAULT_B_MAX_TRAVEL 50.0f // mm NOTE: Must be a positive value.
-#define DEFAULT_SPINDLE_RPM_MAX 100.0f // rpm
-#define DEFAULT_SPINDLE_RPM_MIN 0.0f // rpm
 #define DEFAULT_STEP_PULSE_MICROSECONDS 10
 #define DEFAULT_STEPPING_INVERT_MASK 7
 #define DEFAULT_DIRECTION_INVERT_MASK 7
@@ -527,5 +525,9 @@
 #define DEFAULT_HOMING_SEEK_RATE 500.0f // mm/min
 #define DEFAULT_HOMING_DEBOUNCE_DELAY 250 // msec (0-65k)
 #define DEFAULT_HOMING_PULLOFF 1.5f // mm
+// TODO: remove unavailable functions from code at some point
+#define DEFAULT_SPINDLE_RPM_MAX 100.0f // rpm
+#define DEFAULT_SPINDLE_RPM_MIN 0.0f // rpm
+
 #endif
 #endif

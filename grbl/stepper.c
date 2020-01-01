@@ -33,6 +33,7 @@ void TIM_Configuration(TIM_TypeDef* TIMER, u16 Period, u16 Prescaler, u8 PP);
 typedef int bool;
 #include "stm32f4xx_hal.h"
 extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 //#include "misc.h"
 void TIM_Configuration(TIM_TypeDef* TIMER, uint16_t Period, uint16_t Prescaler, uint8_t PP);
 #endif
@@ -293,6 +294,20 @@ void st_wake_up()
   TIM2->EGR = TIM_PSCReloadMode_Immediate;
   NVIC_EnableIRQ(TIM2_IRQn);
 #endif
+#if defined (STM32F407xx)
+  htim3.Instance->ARR = st.step_pulse_time - 1;
+  htim3.Instance->EGR = TIM_EGR_UG;
+
+  HAL_NVIC_ClearPendingIRQ(TIM3_IRQn);
+
+  htim2.Instance->ARR = st.exec_segment->cycles_per_tick - 1;
+  /* Set the Autoreload value */
+#ifndef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
+  htim2.Instance->PSC = st.exec_segment->prescaler;
+#endif
+  htim2.Instance->EGR = TIM_EGR_UG;
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
+#endif
 }
 
 
@@ -309,6 +324,9 @@ void st_go_idle()
   NVIC_DisableIRQ(TIM2_IRQn);
 #endif
 
+#ifdef STM32F407xx
+  HAL_NVIC_DisableIRQ(TIM2_IRQn);
+#endif
   busy = false;
 
   // Set stepper driver idle state, disabled or enabled, depending on settings and circumstances.
@@ -594,6 +612,23 @@ ISR(TIMER1_COMPA_vect)
 
   st.step_outbits ^= step_port_invert_mask;  // Apply step port invert mask
   busy = false;
+
+#ifdef STM32F407xx
+  // Read in End stop signals from GPIOs
+  LIMIT_PORT &= ~(LIMIT_MASK); // Remove all limit bits, set them again if they are triggered
+  if(HAL_GPIO_ReadPin(Y_L1_GPIO_Port, Y_L1_Pin) |
+	 HAL_GPIO_ReadPin(Y_L2_GPIO_Port, Y_L2_Pin) |
+	 HAL_GPIO_ReadPin(Y_L3_GPIO_Port, Y_L3_Pin) |
+	 HAL_GPIO_ReadPin(Y_L4_GPIO_Port, Y_L4_Pin)){
+	  LIMIT_PORT |= Y_LIMIT_BIT;
+  }
+  if(HAL_GPIO_ReadPin(X_L1_GPIO_Port, X_L1_Pin) |
+	 HAL_GPIO_ReadPin(X_L2_GPIO_Port, X_L2_Pin) |
+     HAL_GPIO_ReadPin(X_L3_GPIO_Port, X_L3_Pin) |
+     HAL_GPIO_ReadPin(X_L4_GPIO_Port, X_L4_Pin)){
+	  LIMIT_PORT |= X_LIMIT_BIT;
+  }
+#endif
 }
 
 

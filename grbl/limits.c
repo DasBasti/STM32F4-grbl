@@ -109,12 +109,15 @@ void limits_disable()
 uint8_t limits_get_state()
 {
   uint8_t limit_state = 0;
-#if defined(AVRTARGET) || defined(STM32F103C8)
+#if defined(AVRTARGET) || defined(STM32F103C8) || defined(STM32F407xx)
 #if defined(AVRTARGET)
   uint8_t pin = (LIMIT_PIN & LIMIT_MASK);
 #endif
 #if defined(STM32F103C8)
   uint16_t pin = GPIO_ReadInputData(LIMIT_PIN);
+#endif
+#if defined(STM32F407xx)
+  uint16_t pin = (LIMIT_PORT & LIMIT_MASK);
 #endif
   #ifdef INVERT_LIMIT_PIN_MASK
     pin ^= INVERT_LIMIT_PIN_MASK;
