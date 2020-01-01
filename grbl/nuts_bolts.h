@@ -24,6 +24,9 @@
 #ifdef STM32F103C8
 #include "stm32f10x_rcc.h"
 #endif
+#ifdef STM32F407xx
+#include "main.h"
+#endif
 #include "float.h"
 #define false 0
 #define true 1
@@ -36,6 +39,10 @@
 #define Y_AXIS 1
 #define A_AXIS 2
 #define B_AXIS 3
+
+// For Placemat stepper we have CW and CCW step pulses.
+#define PLACEMAT_STEP_SET GPIO_PIN_SET
+#define PLACEMAT_STEP_RESET GPIO_PIN_RESET
 
 // CoreXY motor assignments. DO NOT ALTER.
 // NOTE: If the A and B motor axis bindings are changed, this effects the CoreXY equations.

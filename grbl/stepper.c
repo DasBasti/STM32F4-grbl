@@ -31,8 +31,8 @@ void TIM_Configuration(TIM_TypeDef* TIMER, u16 Period, u16 Prescaler, u8 PP);
 
 #ifdef STM32F407xx
 typedef int bool;
-#include "stm32f4xx_hal_rcc.h"
-#include "stm32f4xx_hal_tim.h"
+#include "stm32f4xx_hal.h"
+extern TIM_HandleTypeDef htim2;
 //#include "misc.h"
 void TIM_Configuration(TIM_TypeDef* TIMER, uint16_t Period, uint16_t Prescaler, uint8_t PP);
 #endif
@@ -393,6 +393,7 @@ void grbl_TIM2_IRQHandler(void)
 ISR(TIMER1_COMPA_vect)
 #endif
 {
+// on STM32F4 HAL this is done by HAL
 #ifdef STM32F103C8
 	if ((TIM2->SR & 0x0001) != 0)                  // check interrupt source
 	{
@@ -406,13 +407,18 @@ ISR(TIMER1_COMPA_vect)
 #endif
 
   if (busy) { return; } // The busy-flag is used to avoid reentering this interrupt
-#ifdef AVRTARGET
+
   // Set the direction pins a couple of nanoseconds before we step the steppers
+#ifdef AVRTARGET
   DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
 #endif
 #ifdef STM32F103C8
   GPIO_Write(DIRECTION_PORT, (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK));
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+#endif
+#ifdef STM32F407xx // set dir pins of aux stepper driver. X/Y stepper driver have a CW and CCW puls line that is served during stepping
+  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (DIRECTION_PORT & A_DIRECTION_BIT));
+  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (DIRECTION_PORT & B_DIRECTION_BIT));
 #endif
 
   // Then pulse the stepping pins
@@ -425,6 +431,18 @@ ISR(TIMER1_COMPA_vect)
 #ifdef STM32F103C8
 	GPIO_Write(STEP_PORT, (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | st.step_outbits);
 #endif
+#ifdef STM32F407xx
+	if (STEPDIR & X_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
+		HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_SET);
+	} else {
+		HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_SET);
+	}
+	if (STEPDIR & Y_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
+		HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_SET);
+	} else {
+		HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
+	}
+#endif
   #endif
 
   // Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
@@ -436,7 +454,9 @@ ISR(TIMER1_COMPA_vect)
 #ifdef STM32F103C8
   NVIC_EnableIRQ(TIM3_IRQn);
 #endif
-
+#ifdef STM32F407xx
+  HAL_NVIC_EnableIRQ(TIM3_IRQn);
+#endif
   busy = true;
 #ifdef AVRTARGET
   sei(); // Re-enable interrupts to allow Stepper Port Reset Interrupt to fire on-time.
@@ -466,6 +486,13 @@ ISR(TIMER1_COMPA_vect)
 	  /* Set the Autoreload value */
 #ifndef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING        
 	  TIM2->PSC = st.exec_segment->prescaler;
+#endif
+#endif
+#ifdef STM32F407xx
+	  htim2.Instance->ARR = st.exec_segment->cycles_per_tick - 1;
+	  /* Set the Autoreload value */
+#ifndef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
+	  htim2.Instance->PSC = st.exec_segment->prescaler;
 #endif
 #endif
       st.step_count = st.exec_segment->n_step; // NOTE: Can sometimes be zero when moving slow.
@@ -589,7 +616,7 @@ ISR(TIMER1_COMPA_vect)
 void TIM3_IRQHandler(void)
 #endif
 #ifdef STM32F407xx
-void TIM3_IRQHandler(void)
+void grbl_TIM3_IRQHandler(void)
 #endif
 #ifdef AVRTARGET
 ISR(TIMER0_OVF_vect)
@@ -608,6 +635,12 @@ ISR(TIMER0_OVF_vect)
   // Reset stepping pins (leave the direction pins)
   STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
   TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
+#endif
+#ifdef STM32F407xx
+  HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_RESET);
 #endif
 }
 #ifdef STEP_PULSE_DELAY
@@ -668,6 +701,7 @@ void st_reset()
   //TODO (basneu) Write step and dir informations to GPIOs on real hardware
   //STEP_PORT->ODR = (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
   //DIRECTION_PORT->ODR = (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK);
+  STEPDIR = 0;
 #endif
 }
 

@@ -125,7 +125,7 @@
 volatile uint32_t STEPDIR;
 
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
-#define STEP_PORT &STEPDIR
+#define STEP_PORT STEPDIR
 #define X_STEP_BIT 0
 #define Y_STEP_BIT 1
 #define A_STEP_BIT 2
@@ -133,7 +133,7 @@ volatile uint32_t STEPDIR;
 #define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << A_STEP_BIT) | (1 << B_STEP_BIT)) // All step bits
 
 // Define step direction output pins. NOTE: All direction pins must be on the same port.
-#define DIRECTION_PORT &STEPDIR
+#define DIRECTION_PORT STEPDIR
 #define X_DIRECTION_BIT 4
 #define Y_DIRECTION_BIT 5
 #define A_DIRECTION_BIT 6
@@ -154,7 +154,7 @@ void inline ResetStepperDisableBit() {
 // Define homing/hard limit switch input pins and limit interrupt vectors.
 // NOTE: All limit bit pins must be on the same port
 // TODO: optimize this bit? or leave it if it works ok
-#define LIMIT_PORT &STEPDIR
+#define LIMIT_PORT STEPDIR
 #define X_LIMIT_BIT 8
 #define Y_LIMIT_BIT 9
 // Axis A/B do not have limit switches
