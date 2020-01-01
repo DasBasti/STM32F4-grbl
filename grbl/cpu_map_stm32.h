@@ -142,13 +142,13 @@ volatile uint32_t STEPDIR;
 
 // Define stepper driver enable/disable output pin.
 // We use HAL functions directly to disable the Stepper Pins from here. X/Y axis do not have enable pins.
-void inline SetStepperDisableBit() {
-	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);
+#define SetStepperDisableBit() {\
+	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);\
+	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);\
 }
-void inline ResetStepperDisableBit() {
-	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);
+#define ResetStepperDisableBit() {\
+	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);\
+	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);\
 }
 
 // Define homing/hard limit switch input pins and limit interrupt vectors.

@@ -81,7 +81,7 @@ uint8_t system_control_get_state()
 #endif
 #ifdef STM32F407xx
   // TODO: (basneu) read input values from CONTROL Port
-  uint16_t pin= 0;
+  uint16_t pin = 0;
 #endif
   #ifdef INVERT_CONTROL_PIN_MASK
     pin ^= INVERT_CONTROL_PIN_MASK;

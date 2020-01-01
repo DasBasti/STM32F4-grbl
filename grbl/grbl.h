@@ -60,9 +60,6 @@ typedef int bool;
 #endif
 #ifdef STM32F407xx
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_gpio.h"
-#include "stm32f4xx_hal_exti.h"
-#include "stm32f4xx_hal_tim.h"
 extern UART_HandleTypeDef huart2;
 #define PSTR(x) x
 #define pgm_read_byte_near(x) *(x)
@@ -74,10 +71,6 @@ void _delay_us(uint32_t x);
 typedef int bool;
 //#define NOEEPROMSUPPORT
 #define printPgmString printString
-// TODO: (basneu) Read and Write GPIOS from STEPDIR value
-//#define GPIO_ReadInputData(PORT) (uint16_t)PORT->IDR & 0xffff
-//#define GPIO_ReadOutputData(PORT) (uint16_t)PORT->ODR & 0xffff
-
 #endif
 
 #include <string.h>

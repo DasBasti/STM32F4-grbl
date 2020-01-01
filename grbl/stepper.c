@@ -251,13 +251,11 @@ void st_wake_up()
   // Enable stepper drivers.
   if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) 
   { 
-	  // TODO
-	  //SetStepperDisableBit();
+	  SetStepperDisableBit();
   }
   else 
   { 
-	  // TODO
-	  //ResetStepperDisableBit();
+	  ResetStepperDisableBit();
   }
 
   // Initialize stepper output bits to ensure first ISR call does not step.
@@ -324,13 +322,11 @@ void st_go_idle()
   if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) { pin_state = !pin_state; } // Apply pin invert.
   if (pin_state) 
   { 
-	  //TODO
-	  //SetStepperDisableBit();
+	  SetStepperDisableBit();
   }
   else 
   { 
-	  //TODO
-	  //ResetStepperDisableBit();
+	  ResetStepperDisableBit();
   }
 }
 
@@ -437,7 +433,7 @@ ISR(TIMER1_COMPA_vect)
 	} else {
 		HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_SET);
 	}
-	if (STEPDIR & Y_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
+	if (STEPDIR & Y_DIRECTION_BIT){
 		HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_SET);
 	} else {
 		HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
@@ -641,6 +637,8 @@ ISR(TIMER0_OVF_vect)
   HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_RESET);
   HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_RESET);
   HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP2_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
 #endif
 }
 #ifdef STEP_PULSE_DELAY
@@ -698,10 +696,15 @@ void st_reset()
   GPIO_Write(DIRECTION_PORT, (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK));
 #endif
 #ifdef STM32F407xx
-  //TODO (basneu) Write step and dir informations to GPIOs on real hardware
-  //STEP_PORT->ODR = (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
-  //DIRECTION_PORT->ODR = (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK);
   STEPDIR = 0;
+  HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP2_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP1_DIR_Pin, GPIO_PIN_RESET);
 #endif
 }
 

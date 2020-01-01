@@ -48,11 +48,7 @@ unsigned char EE_Buffer[0x400];
 #endif
 #ifdef STM32F407xx
 #include <string.h>
-// TODO
-//#include "stm32eeprom.h"
 #include "settings.h"
-#endif
-#if defined (STM32F407xx)
 unsigned char EE_Buffer[0x400];
 #endif
 
