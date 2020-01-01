@@ -118,6 +118,7 @@
 #endif // CPU_MAP_STM32F103
 
 #ifdef CPU_MAP_STM32F407
+#include "main.h" // include GPIO pin names from Cube project
 // Since we do not have the stepper connected directly to the corresponding ports on the chip we need to work around this issue
 // with a temporary buffer 'PORT'
 // This 'PORT' is read and the correct pins are set high or low depending on the values in STEPDIR
