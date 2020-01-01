@@ -171,6 +171,23 @@ void inline ResetStepperDisableBit() {
 #define CONTROL_Y_MINUS_BIT 4
 #define CONTROL_MASK ((1 << CONTROL_FAST_BIT) | (1 << CONTROL_TEACH_BIT) | (1 << CONTROL_X_PLUS_BIT) | (1 << CONTROL_X_MINUS_BIT) | (1 << CONTROL_Y_PLUS_BIT) | (1 << CONTROL_Y_MINUS_BIT))
 
+// Start of PWM & Stepper Enabled Spindle
+#ifdef VARIABLE_SPINDLE
+
+// NOTE: On the 328p, these must be the same as the SPINDLE_ENABLE settings.
+#define SPINDLE_PWM_FREQUENCY 10000 // KHz
+#define SPINDLE_PWM_DDR GPIOA
+#define SPINDLE_PWM_PORT GPIOA
+#define RCC_SPINDLE_PWM_PORT RCC_APB2Periph_GPIOA
+#define SPINDLE_PWM_BIT 8
+#endif // End of VARIABLE_SPINDLE
+#define SPINDLE_PWM_MAX_VALUE (1000000 / SPINDLE_PWM_FREQUENCY)
+#ifndef SPINDLE_PWM_MIN_VALUE
+#define SPINDLE_PWM_MIN_VALUE 1 // Must be greater than zero.
+#endif
+#define SPINDLE_PWM_OFF_VALUE 0
+#define SPINDLE_PWM_RANGE (SPINDLE_PWM_MAX_VALUE - SPINDLE_PWM_MIN_VALUE)
+
 //  Port A                                         Port B
 //   0      X_STEP_BIT
 //   1      Y_STEP_BIT
