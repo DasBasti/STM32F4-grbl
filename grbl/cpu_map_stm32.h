@@ -159,15 +159,6 @@ void inline ResetStepperDisableBit() {
 // Axis A/B do not have limit switches
 #define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT)) // All limit bits
 
-// Define flood and mist coolant enable output pins.
-// a later date if flash and memory space allows.
-#define COOLANT_FLOOD_PORT GPIOB
-#define RCC_COOLANT_FLOOD_PORT RCC_APB2Periph_GPIOB
-#define COOLANT_FLOOD_BIT 3
-#define COOLANT_MIST_PORT GPIOB
-#define RCC_COOLANT_MIST_PORT RCC_APB2Periph_GPIOB
-#define COOLANT_MIST_BIT 4
-
 // Define user-control controls (cycle start, reset, feed hold) input pins.
 // NOTE: All CONTROLs pins must be on the same port and not on a port with other input pins (limits).
 #define CONTROL_PIN_PORT GPIOB
