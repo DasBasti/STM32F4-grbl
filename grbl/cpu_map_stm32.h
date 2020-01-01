@@ -159,20 +159,6 @@ void inline ResetStepperDisableBit() {
 // Axis A/B do not have limit switches
 #define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT)) // All limit bits
 
-// Define spindle enable and spindle direction output pins.
-#define SPINDLE_ENABLE_PORT GPIOB
-#define RCC_SPINDLE_ENABLE_PORT RCC_APB2Periph_GPIOB
-#define SPINDLE_ENABLE_BIT 13 //
-#ifndef USE_SPINDLE_DIR_AS_ENABLE_PIN
-#define SPINDLE_DIRECTION_DDR GPIOB
-#define SPINDLE_DIRECTION_PORT GPIOB
-#define SPINDLE_DIRECTION_BIT 14 //
-#endif
-#define SetSpindleEnablebit() HAL_GPIO_WritePin(SPINDLE_ENABLE_PORT, 1 << SPINDLE_ENABLE_BIT, GPIO_PIN_SET)
-#define ResetSpindleEnablebit() HAL_GPIO_WritePin(SPINDLE_ENABLE_PORT, 1 << SPINDLE_ENABLE_BIT, GPIO_PIN_RESET)
-#define SetSpindleDirectionBit() HAL_GPIO_WritePin(SPINDLE_DIRECTION_PORT, 1 << SPINDLE_DIRECTION_BIT, GPIO_PIN_SET)
-#define ResetSpindleDirectionBit() HAL_GPIO_WritePin(SPINDLE_DIRECTION_PORT, 1 << SPINDLE_DIRECTION_BIT, GPIO_PIN_RESET)
-
 // Define flood and mist coolant enable output pins.
 // a later date if flash and memory space allows.
 #define COOLANT_FLOOD_PORT GPIOB
