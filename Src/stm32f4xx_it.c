@@ -46,7 +46,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-extern grbl_TIM2_IRQHandler();
+extern void grbl_TIM2_IRQHandler();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
