@@ -118,41 +118,46 @@
 #endif // CPU_MAP_STM32F103
 
 #ifdef CPU_MAP_STM32F407
+// Since we do not have the stepper connected directly to the corresponding ports on the chip we need to work around this issue
+// with a temporary buffer 'PORT'
+// This 'PORT' is read and the correct pins are set high or low depending on the values in STEPDIR
+volatile uint32_t STEPDIR;
 
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
-#define STEP_PORT GPIOB
+#define STEP_PORT &STEPDIR
 #define X_STEP_BIT 0
 #define Y_STEP_BIT 1
-#define Z_STEP_BIT -1
-#define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT)) // All step bits
+#define A_STEP_BIT 2
+#define B_STEP_BIT 3
+#define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << A_STEP_BIT) | (1 << B_STEP_BIT)) // All step bits
 
 // Define step direction output pins. NOTE: All direction pins must be on the same port.
-#define DIRECTION_PORT GPIOA
-#define RCC_DIRECTION_PORT RCC_APB2Periph_GPIOA
-#define X_DIRECTION_BIT 3
-#define Y_DIRECTION_BIT 4
-#define Z_DIRECTION_BIT 5
-#define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT)) // All direction bits
+#define DIRECTION_PORT &STEPDIR
+#define X_DIRECTION_BIT 4
+#define Y_DIRECTION_BIT 5
+#define A_DIRECTION_BIT 6
+#define B_DIRECTION_BIT 7
+#define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << A_DIRECTION_BIT) | (1 << B_DIRECTION_BIT)) // All direction bits
 
 // Define stepper driver enable/disable output pin.
-#define STEPPERS_DISABLE_PORT GPIOA
-#define RCC_STEPPERS_DISABLE_PORT RCC_APB2Periph_GPIOA
-#define STEPPERS_DISABLE_BIT 6
-#define STEPPERS_DISABLE_MASK (1 << STEPPERS_DISABLE_BIT)
-#define SetStepperDisableBit() GPIO_SetBits(STEPPERS_DISABLE_PORT, STEPPERS_DISABLE_MASK)
-#define ResetStepperDisableBit() GPIO_ResetBits(STEPPERS_DISABLE_PORT, STEPPERS_DISABLE_MASK)
+// We use HAL functions directly to disable the Stepper Pins from here. X/Y axis do not have enable pins.
+void inline SetStepperDisableBit() {
+	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);
+}
+void inline ResetStepperDisableBit() {
+	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);
+}
 
 // Define homing/hard limit switch input pins and limit interrupt vectors.
 // NOTE: All limit bit pins must be on the same port
-#define LIMIT_PIN GPIOB
-#define LIMIT_PORT GPIOB
-#define RCC_LIMIT_PORT RCC_APB2Periph_GPIOB
-#define GPIO_LIMIT_PORT GPIO_PortSourceGPIOB
-#define X_LIMIT_BIT 10
-#define Y_LIMIT_BIT 11
-#define Z_LIMIT_BIT 12
-
-#define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT)) // All limit bits
+// TODO: optimize this bit? or leave it if it works ok
+#define LIMIT_PORT &STEPDIR
+#define X_LIMIT_BIT 8
+#define Y_LIMIT_BIT 9
+// Axis A/B do not have limit switches
+#define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT)) // All limit bits
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_PORT GPIOB
@@ -229,6 +234,9 @@
 //   13 14 SWD																		SPINDLE_ENABLE_BIT
 //     14																						SPINDLE_DIRECTION_BIT
 //   15     PROBE_BIT
+
+// NOTE: We include inline functions to convert from the hardware interface that grbl expects to one that is available in the machine
+void inline
 
 #endif // CPU_MAP_STM32F103
 
