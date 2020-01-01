@@ -137,6 +137,9 @@ unsigned char eeprom_get_char( unsigned int addr )
 #if defined(STM32F103C8)
 	return EE_Buffer[addr];
 #endif
+#ifdef STM32F407xx
+	return EE_Buffer[addr];
+#endif
 }
 
 /*! \brief  Write byte to EEPROM.
