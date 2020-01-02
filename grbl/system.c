@@ -429,7 +429,7 @@ void system_set_exec_state_flag(uint8_t mask) {
   sys_rt_exec_state |= (mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_state |= (mask);
   __enable_irq();
@@ -443,7 +443,7 @@ void system_clear_exec_state_flag(uint8_t mask) {
   sys_rt_exec_state &= ~(mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_state &= ~(mask);
   __enable_irq();
@@ -457,7 +457,7 @@ void system_set_exec_alarm(uint8_t code) {
   sys_rt_exec_alarm = code;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_alarm |= (code);
   __enable_irq();
@@ -471,7 +471,7 @@ void system_clear_exec_alarm() {
   sys_rt_exec_alarm = 0;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_alarm = 0;
   __enable_irq();
@@ -485,7 +485,7 @@ void system_set_exec_motion_override_flag(uint8_t mask) {
   sys_rt_exec_motion_override |= (mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_motion_override |= (mask);
   __enable_irq();
@@ -499,7 +499,7 @@ void system_set_exec_accessory_override_flag(uint8_t mask) {
   sys_rt_exec_accessory_override |= (mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_accessory_override |= (mask);
   __enable_irq();
@@ -513,7 +513,7 @@ void system_clear_exec_motion_overrides() {
   sys_rt_exec_motion_override = 0;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_motion_override = 0;
   __enable_irq();
@@ -527,7 +527,7 @@ void system_clear_exec_accessory_overrides() {
   sys_rt_exec_accessory_override = 0;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
+#if defined(STM32F103C8) || defined(STM32F407xx)
   __disable_irq();
   sys_rt_exec_accessory_override = 0;
   __enable_irq();

@@ -145,8 +145,8 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 	// Initialize system upon power-up.
-  //settings_init(); // Load Grbl settings from EEPROM
-  //stepper_init();  // Configure stepper pins and interrupt timers
+  settings_init(); // Load Grbl settings from EEPROM
+  stepper_init();  // Configure stepper pins and interrupt timers
   system_init();   // Configure pinout pins and pin-change interrupt
 
 	memset(sys_position, 0, sizeof(sys_position)); // Clear machine position.
@@ -352,6 +352,7 @@ static void MX_TIM2_Init(void)
   /* USER CODE END TIM2_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
@@ -369,6 +370,12 @@ static void MX_TIM2_Init(void)
   }
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
+  sSlaveConfig.InputTrigger = TIM_TS_ITR0;
+  if (HAL_TIM_SlaveConfigSynchro(&htim2, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -397,6 +404,7 @@ static void MX_TIM3_Init(void)
   /* USER CODE END TIM3_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_SlaveConfigTypeDef sSlaveConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   /* USER CODE BEGIN TIM3_Init 1 */
@@ -414,6 +422,12 @@ static void MX_TIM3_Init(void)
   }
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_DISABLE;
+  sSlaveConfig.InputTrigger = TIM_TS_ITR0;
+  if (HAL_TIM_SlaveConfigSynchro(&htim3, &sSlaveConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -581,12 +595,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : CCW_SW_Pin CW_SW_Pin M_CENTER_Pin Y_HM_Pin 
-                           Y_L4_Pin Y_L3_Pin Y_L2_Pin Y_L1_Pin */
-  GPIO_InitStruct.Pin = CCW_SW_Pin|CW_SW_Pin|M_CENTER_Pin|Y_HM_Pin 
-                          |Y_L4_Pin|Y_L3_Pin|Y_L2_Pin|Y_L1_Pin;
+  /*Configure GPIO pins : CCW_SW_Pin CW_SW_Pin M_CENTER_Pin Y_HM_Pin */
+  GPIO_InitStruct.Pin = CCW_SW_Pin|CW_SW_Pin|M_CENTER_Pin|Y_HM_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : Y_L4_Pin Y_L3_Pin Y_L2_Pin Y_L1_Pin */
+  GPIO_InitStruct.Pin = Y_L4_Pin|Y_L3_Pin|Y_L2_Pin|Y_L1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : OUTP_nEN_Pin Y_CCW_Pin X_CW_Pin CW_CCW_Pin 
@@ -607,10 +625,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : X_L1_Pin X_L2_Pin X_L3_Pin X_L4_Pin 
-                           XHM_Pin T_HEAD_Pin T_VAC_Pin */
-  GPIO_InitStruct.Pin = X_L1_Pin|X_L2_Pin|X_L3_Pin|X_L4_Pin 
-                          |XHM_Pin|T_HEAD_Pin|T_VAC_Pin;
+  /*Configure GPIO pins : X_L1_Pin X_L2_Pin X_L3_Pin X_L4_Pin */
+  GPIO_InitStruct.Pin = X_L1_Pin|X_L2_Pin|X_L3_Pin|X_L4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : XHM_Pin T_HEAD_Pin T_VAC_Pin */
+  GPIO_InitStruct.Pin = XHM_Pin|T_HEAD_Pin|T_VAC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
