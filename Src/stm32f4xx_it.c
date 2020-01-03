@@ -59,6 +59,7 @@ extern void grbl_TIM3_IRQHandler();
 extern ETH_HandleTypeDef heth;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim14;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 extern uint8_t rx_byte;
@@ -243,6 +244,20 @@ void USART2_IRQHandler(void)
   processUARTByte();
   HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
   /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM8 trigger and commutation interrupts and TIM14 global interrupt.
+  */
+void TIM8_TRG_COM_TIM14_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM8_TRG_COM_TIM14_IRQn 0 */
+
+  /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim14);
+  /* USER CODE BEGIN TIM8_TRG_COM_TIM14_IRQn 1 */
+// We patch the inputs to the correct ports for grbl and trigger interrups here
+  /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */
 }
 
 /**

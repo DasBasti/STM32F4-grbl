@@ -307,6 +307,7 @@ void st_wake_up()
 #endif
   htim2.Instance->EGR = TIM_EGR_UG;
   HAL_NVIC_EnableIRQ(TIM2_IRQn);
+  HAL_TIM_Base_Start_IT(&htim2);
 #endif
 }
 
@@ -446,15 +447,19 @@ ISR(TIMER1_COMPA_vect)
 	GPIO_Write(STEP_PORT, (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | st.step_outbits);
 #endif
 #ifdef STM32F407xx
-	if (STEPDIR & X_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
-		HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_SET);
-	} else {
-		HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_SET);
+	if (STEPDIR & X_STEP_BIT){
+		if (STEPDIR & X_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
+			HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_SET);
+		} else {
+			HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_SET);
+		}
 	}
-	if (STEPDIR & Y_DIRECTION_BIT){
-		HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_SET);
-	} else {
-		HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
+	if (STEPDIR & Y_STEP_BIT){
+		if (STEPDIR & Y_DIRECTION_BIT){
+			HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_SET);
+		} else {
+			HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
+		}
 	}
 #endif
   #endif
@@ -470,6 +475,7 @@ ISR(TIMER1_COMPA_vect)
 #endif
 #ifdef STM32F407xx
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
+  HAL_TIM_Base_Start_IT(&htim3);
 #endif
   busy = true;
 #ifdef AVRTARGET
@@ -748,6 +754,10 @@ void stepper_init()
 {
   //STM32F4 has Pins configured by CubeMX
   // Configure step and direction interface pins
+#ifdef STM32F407xx
+	HAL_NVIC_DisableIRQ(TIM3_IRQn);
+	HAL_NVIC_DisableIRQ(TIM2_IRQn);
+#endif
 #ifdef STM32F103C8
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_STEPPERS_DISABLE_PORT, ENABLE);

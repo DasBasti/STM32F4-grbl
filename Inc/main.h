@@ -150,8 +150,8 @@ void Error_Handler(void);
 #define X_L3_GPIO_Port GPIOD
 #define X_L4_Pin GPIO_PIN_12
 #define X_L4_GPIO_Port GPIOD
-#define XHM_Pin GPIO_PIN_13
-#define XHM_GPIO_Port GPIOD
+#define X_HM_Pin GPIO_PIN_13
+#define X_HM_GPIO_Port GPIOD
 #define T_HEAD_Pin GPIO_PIN_14
 #define T_HEAD_GPIO_Port GPIOD
 #define T_VAC_Pin GPIO_PIN_15

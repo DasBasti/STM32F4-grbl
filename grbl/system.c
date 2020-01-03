@@ -81,7 +81,13 @@ uint8_t system_control_get_state()
 #endif
 #ifdef STM32F407xx
   // TODO: (basneu) read input values from CONTROL Port
-  uint16_t pin = 0;
+  uint32_t pin = 0;
+  pin |= HAL_GPIO_ReadPin(TEACH_GPIO_Port, TEACH_Pin) << CONTROL_FEED_HOLD_BIT; // TODO: (basneu) fix TEACH = FEED HOLD
+  pin |= HAL_GPIO_ReadPin(FAST_GPIO_Port, FAST_Pin) << CONTROL_RESET_BIT; // TODO: (basneu) fix FAST = RESET
+  pin |= HAL_GPIO_ReadPin(X_PLUS_GPIO_Port, X_PLUS_Pin) << CONTROL_X_PLUS_BIT;
+  pin |= HAL_GPIO_ReadPin(X_MINUS_GPIO_Port, X_MINUS_Pin) << CONTROL_X_MINUS_BIT;
+  pin |= HAL_GPIO_ReadPin(X_PLUS_GPIO_Port, Y_PLUS_Pin) << CONTROL_Y_PLUS_BIT;
+  pin |= HAL_GPIO_ReadPin(Y_MINUS_GPIO_Port, Y_MINUS_Pin) << CONTROL_Y_PLUS_BIT;
 #endif
   #ifdef INVERT_CONTROL_PIN_MASK
     pin ^= INVERT_CONTROL_PIN_MASK;
@@ -93,6 +99,10 @@ uint8_t system_control_get_state()
     if (bit_isfalse(pin,(1<<CONTROL_RESET_BIT))) { control_state |= CONTROL_PIN_INDEX_RESET; }
     if (bit_isfalse(pin,(1<<CONTROL_FEED_HOLD_BIT))) { control_state |= CONTROL_PIN_INDEX_FEED_HOLD; }
     if (bit_isfalse(pin,(1<<CONTROL_CYCLE_START_BIT))) { control_state |= CONTROL_PIN_INDEX_CYCLE_START; }
+    if (bit_isfalse(pin,(1<<CONTROL_X_PLUS_BIT))) { /*TODO: (basneu) movement */ }
+    if (bit_isfalse(pin,(1<<CONTROL_X_MINUS_BIT))) { /*TODO: (basneu) movement */ }
+    if (bit_isfalse(pin,(1<<CONTROL_Y_PLUS_BIT))) { /*TODO: (basneu) movement */ }
+    if (bit_isfalse(pin,(1<<CONTROL_Y_MINUS_BIT))) { /*TODO: (basneu) movement */ }
   }
   return(control_state);
 }
