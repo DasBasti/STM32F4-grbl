@@ -2,6 +2,7 @@ OpenPNP compatible grbl for our pick and place machine
 ======================================================
 This port of grbl v1.1 is based on grbl for STM32F103 by [MoonCactus](https://github.com/MoonCactus/grbl-STM32F103)
 
+Used with this hardware [Interface Board](https://bitbucket.org/kurzschluss/stm286-interface-board/src/master/)
 
 Things to remember
 ------------------
