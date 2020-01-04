@@ -461,6 +461,12 @@ ISR(TIMER1_COMPA_vect)
 			HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
 		}
 	}
+	if (STEPDIR & A_STEP_BIT){
+		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_SET);
+	}
+	if (STEPDIR & B_STEP_BIT){
+		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP2_STP_Pin, GPIO_PIN_SET);
+	}
 #endif
   #endif
 
