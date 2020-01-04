@@ -624,23 +624,6 @@ ISR(TIMER1_COMPA_vect)
 
   st.step_outbits ^= step_port_invert_mask;  // Apply step port invert mask
   busy = false;
-
-#ifdef STM32F407xx
-  // Read in End stop signals from GPIOs
-  LIMIT_PORT &= ~(LIMIT_MASK); // Remove all limit bits, set them again if they are triggered
-  if(HAL_GPIO_ReadPin(Y_L1_GPIO_Port, Y_L1_Pin) |
-	 HAL_GPIO_ReadPin(Y_L2_GPIO_Port, Y_L2_Pin) |
-	 HAL_GPIO_ReadPin(Y_L3_GPIO_Port, Y_L3_Pin) |
-	 HAL_GPIO_ReadPin(Y_L4_GPIO_Port, Y_L4_Pin)){
-	  LIMIT_PORT |= Y_LIMIT_BIT;
-  }
-  if(HAL_GPIO_ReadPin(X_L1_GPIO_Port, X_L1_Pin) |
-	 HAL_GPIO_ReadPin(X_L2_GPIO_Port, X_L2_Pin) |
-     HAL_GPIO_ReadPin(X_L3_GPIO_Port, X_L3_Pin) |
-     HAL_GPIO_ReadPin(X_L4_GPIO_Port, X_L4_Pin)){
-	  LIMIT_PORT |= X_LIMIT_BIT;
-  }
-#endif
 }
 
 
