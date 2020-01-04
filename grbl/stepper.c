@@ -35,7 +35,7 @@ typedef int bool;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 //#include "misc.h"
-void TIM_Configuration(TIM_TypeDef* TIMER, uint16_t Period, uint16_t Prescaler, uint8_t PP);
+volatile uint32_t STEPDIR;
 #endif
 
 // Some useful constants.

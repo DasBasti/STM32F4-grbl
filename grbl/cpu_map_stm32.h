@@ -122,7 +122,9 @@
 // Since we do not have the stepper connected directly to the corresponding ports on the chip we need to work around this issue
 // with a temporary buffer 'PORT'
 // This 'PORT' is read and the correct pins are set high or low depending on the values in STEPDIR
-volatile uint32_t STEPDIR;
+extern volatile uint32_t STEPDIR;
+extern volatile uint32_t LIMITPORT;
+
 
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
 #define STEP_PORT STEPDIR
@@ -154,9 +156,9 @@ volatile uint32_t STEPDIR;
 // Define homing/hard limit switch input pins and limit interrupt vectors.
 // NOTE: All limit bit pins must be on the same port
 // TODO: optimize this bit? or leave it if it works ok
-#define LIMIT_PORT STEPDIR
-#define X_LIMIT_BIT 8
-#define Y_LIMIT_BIT 9
+#define LIMIT_PORT LIMITPORT
+#define X_LIMIT_BIT 0
+#define Y_LIMIT_BIT 1
 // Axis A/B do not have limit switches
 #define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT)) // All limit bits
 

@@ -21,6 +21,9 @@
 
 #include "grbl.h"
 
+#if defined(STM32F407xx)
+volatile uint32_t LIMITPORT;
+#endif
 
 // Homing axis search distance multiplier. Computed by this value times the cycle travel.
 #ifndef HOMING_AXIS_SEARCH_SCALAR
@@ -210,6 +213,44 @@ ISR(WDT_vect) // Watchdog timer ISR
 #error ENABLE_SOFTWARE_DEBOUNCE is not supported yet
 #endif
 #endif
+#ifdef STM32F407xx
+/*
+ * When using STM32F405 there is an interrupt polling inputs and using this routine to trigger a
+ * soft interrupt for IO pins.
+ */
+void grbl_EXTI15_10_IRQHandler(void)
+{
+	if ((LIMITPORT & (1 << X_LIMIT_BIT)) != RESET)
+	{
+		LIMITPORT &= ~(1 << X_LIMIT_BIT);
+	}
+	if ((LIMITPORT & (1 << Y_LIMIT_BIT)) != RESET)
+	{
+		LIMITPORT &= ~(1 << Y_LIMIT_BIT);
+	}
+  // Ignore limit switches if already in an alarm state or in-process of executing an alarm.
+  // When in the alarm state, Grbl should have been reset or will force a reset, so any pending
+  // moves in the planner and serial buffers are all cleared and newly sent blocks will be
+  // locked out until a homing cycle or a kill lock command. Allows the user to disable the hard
+  // limit setting if their limits are constantly triggering after a reset and move their axes.
+  if (sys.state != STATE_ALARM) {
+    if (!(sys_rt_exec_alarm)) {
+#ifdef HARD_LIMIT_FORCE_STATE_CHECK
+      // Check limit pin state.
+      if (limits_get_state()) {
+        mc_reset(); // Initiate system kill.
+        system_set_exec_alarm(EXEC_ALARM_HARD_LIMIT); // Indicate hard limit critical event
+      }
+#else
+      mc_reset(); // Initiate system kill.
+      system_set_exec_alarm(EXEC_ALARM_HARD_LIMIT); // Indicate hard limit critical event
+#endif
+    }
+  }
+}
+#endif
+
+
 
 // Homes the specified cycle axes, sets the machine position, and performs a pull-off motion after
 // completing. Homing is a special motion case, which involves rapid uncontrolled stops to locate

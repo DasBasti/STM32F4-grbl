@@ -23,6 +23,9 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#define CPU_MAP_STM32F407 // Load pin configuration for STM32F407
+#include "cpu_map_stm32.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,12 +45,14 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+uint32_t prevLIMITPORT;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
 extern void grbl_TIM2_IRQHandler();
 extern void grbl_TIM3_IRQHandler();
+extern void grbl_EXTI15_10_IRQHandler();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -64,7 +69,7 @@ extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 extern uint8_t rx_byte;
 extern void processUARTByte (void);
-
+extern volatile uint32_t LIMITPORT;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -257,6 +262,23 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim14);
   /* USER CODE BEGIN TIM8_TRG_COM_TIM14_IRQn 1 */
 // We patch the inputs to the correct ports for grbl and trigger interrups here
+  if(!HAL_GPIO_ReadPin(X_L1_GPIO_Port, X_L1_Pin) |
+	 !HAL_GPIO_ReadPin(X_L2_GPIO_Port, X_L2_Pin) |
+	 !HAL_GPIO_ReadPin(X_L3_GPIO_Port, X_L3_Pin) |
+	 !HAL_GPIO_ReadPin(X_L4_GPIO_Port, X_L4_Pin)){
+	  LIMIT_PORT |= (1 << X_LIMIT_BIT);
+  }
+  if(!HAL_GPIO_ReadPin(Y_L1_GPIO_Port, Y_L1_Pin) |
+	 !HAL_GPIO_ReadPin(Y_L2_GPIO_Port, Y_L2_Pin) |
+	 !HAL_GPIO_ReadPin(Y_L3_GPIO_Port, Y_L3_Pin) |
+	 !HAL_GPIO_ReadPin(Y_L4_GPIO_Port, Y_L4_Pin)){
+	  LIMIT_PORT |= (1 << Y_LIMIT_BIT);
+  }
+  if (prevLIMITPORT != LIMITPORT){
+	  prevLIMITPORT = LIMITPORT;
+
+  }
+
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */
 }
 
