@@ -1,13 +1,16 @@
 OpenPNP compatible grbl for our pick and place machine
 ======================================================
+This port of grbl v1.1 is based on grbl for STM32F103 by [MoonCactus](https://github.com/MoonCactus/grbl-STM32F103)
+
 
 Things to remember
 ------------------
-* To start remove M82 from start code
-
+* To start remove M82 from start code in openpnp
+* PLACEMAT_STEP_SET (cpu_map_stm32.h) needs to be checked in vitro to set the signal high  or low active
+* PlaceMat Stepper driver work with CW and CCW pulses not STP/DIR like the regualt grbl driver. This is adressed in stepper.c code
 
 Error Codes
--------------------
+-----------
 1 Expected command letter G-code words consist of a letter and a value. Letter was not found.
 2 Bad number format Missing the expected G-code word value or numeric value format is not valid.
 3 Invalid statement Grbl '$' system command was not recognized or supported.
