@@ -124,6 +124,7 @@
 // This 'PORT' is read and the correct pins are set high or low depending on the values in STEPDIR
 extern volatile uint32_t STEPDIR;
 extern volatile uint32_t LIMITPORT;
+extern volatile uint32_t CONTROLLPORT;
 
 
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
@@ -159,8 +160,11 @@ extern volatile uint32_t LIMITPORT;
 #define LIMIT_PORT LIMITPORT
 #define X_LIMIT_BIT 0
 #define Y_LIMIT_BIT 1
+#define Z_LIMIT_BIT 2
+#define A_LIMIT_BIT 3
+#define B_LIMIT_BIT 4
 // Axis A/B do not have limit switches
-#define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT)) // All limit bits
+#define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT) | (1 << A_LIMIT_BIT) | (1 << B_LIMIT_BIT)) // All limit bits
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_PORT GPIOB
@@ -187,7 +191,7 @@ extern volatile uint32_t LIMITPORT;
 
 // Define user-control controls (cycle start, reset, feed hold) input pins.
 // NOTE: All CONTROLs pins must be on the same port and not on a port with other input pins (limits).
-#define CONTROL_PIN_PORT GPIOG
+#define CONTROL_PIN_PORT CONTROLLPORT;
 #define CONTROL_FAST_BIT 3
 #define CONTROL_TEACH_BIT 2
 #define CONTROL_X_PLUS_BIT 7
