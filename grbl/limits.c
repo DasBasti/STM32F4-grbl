@@ -21,10 +21,6 @@
 
 #include "grbl.h"
 
-#if defined(STM32F407xx)
-volatile uint32_t LIMITPORT;
-#endif
-
 // Homing axis search distance multiplier. Computed by this value times the cycle travel.
 #ifndef HOMING_AXIS_SEARCH_SCALAR
   #define HOMING_AXIS_SEARCH_SCALAR  1.5f // Must be > 1 to ensure limit switch will be engaged.
@@ -120,7 +116,7 @@ uint8_t limits_get_state()
   uint16_t pin = GPIO_ReadInputData(LIMIT_PIN);
 #endif
 #if defined(STM32F407xx)
-  uint16_t pin = (LIMIT_PORT & LIMIT_MASK);
+  uint16_t pin = (ioPort & LIMIT_MASK);
 #endif
   #ifdef INVERT_LIMIT_PIN_MASK
     pin ^= INVERT_LIMIT_PIN_MASK;
@@ -220,13 +216,13 @@ ISR(WDT_vect) // Watchdog timer ISR
  */
 void grbl_EXTI15_10_IRQHandler(void)
 {
-	if ((LIMITPORT & (1 << X_LIMIT_BIT)) != RESET)
+	if ((ioPort & (1 << X_LIMIT_BIT)) != RESET)
 	{
-		LIMITPORT &= ~(1 << X_LIMIT_BIT);
+		ioPort &= ~(1 << X_LIMIT_BIT);
 	}
-	if ((LIMITPORT & (1 << Y_LIMIT_BIT)) != RESET)
+	if ((ioPort & (1 << Y_LIMIT_BIT)) != RESET)
 	{
-		LIMITPORT &= ~(1 << Y_LIMIT_BIT);
+		ioPort &= ~(1 << Y_LIMIT_BIT);
 	}
   // Ignore limit switches if already in an alarm state or in-process of executing an alarm.
   // When in the alarm state, Grbl should have been reset or will force a reset, so any pending

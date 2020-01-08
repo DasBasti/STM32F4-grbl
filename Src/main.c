@@ -147,6 +147,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
+
 	// Initialize system upon power-up.
   settings_init(); // Load Grbl settings from EEPROM
   stepper_init();  // Configure stepper pins and interrupt timers
@@ -634,7 +635,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : Y_L4_Pin Y_L3_Pin Y_L2_Pin Y_L1_Pin */
   GPIO_InitStruct.Pin = Y_L4_Pin|Y_L3_Pin|Y_L2_Pin|Y_L1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pin : Y_CW_Pin */
@@ -668,18 +669,18 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(X_CCW_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : X_L1_Pin X_L2_Pin X_L3_Pin X_L4_Pin 
-                           T_VAC_Pin */
+                           X_HM_Pin T_HEAD_Pin */
   GPIO_InitStruct.Pin = X_L1_Pin|X_L2_Pin|X_L3_Pin|X_L4_Pin 
-                          |T_VAC_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : X_HM_Pin T_HEAD_Pin */
-  GPIO_InitStruct.Pin = X_HM_Pin|T_HEAD_Pin;
+                          |X_HM_Pin|T_HEAD_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : T_VAC_Pin */
+  GPIO_InitStruct.Pin = T_VAC_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(T_VAC_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : TEACH_Pin Y_MINUS_Pin Y_PLUS_Pin X_MINUS_Pin 
                            X_PLUS_Pin */

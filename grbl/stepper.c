@@ -35,7 +35,7 @@ typedef int bool;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 //#include "misc.h"
-volatile uint32_t STEPDIR;
+volatile uint32_t ioPort;
 #endif
 
 // Some useful constants.
@@ -432,8 +432,8 @@ ISR(TIMER1_COMPA_vect)
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 #endif
 #ifdef STM32F407xx // set dir pins of aux stepper driver. X/Y stepper driver have a CW and CCW puls line that is served during stepping
-  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (DIRECTION_PORT & A_DIRECTION_BIT));
-  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (DIRECTION_PORT & B_DIRECTION_BIT));
+  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (ioPort & A_DIRECTION_BIT));
+  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (ioPort & B_DIRECTION_BIT));
 #endif
 
   // Then pulse the stepping pins
@@ -447,24 +447,24 @@ ISR(TIMER1_COMPA_vect)
 	GPIO_Write(STEP_PORT, (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | st.step_outbits);
 #endif
 #ifdef STM32F407xx
-	if (STEPDIR & X_STEP_BIT){
-		if (STEPDIR & X_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
+	if (ioPort & X_STEP_BIT){
+		if (ioPort & X_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
 			HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_SET);
 		} else {
 			HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_SET);
 		}
 	}
-	if (STEPDIR & Y_STEP_BIT){
-		if (STEPDIR & Y_DIRECTION_BIT){
+	if (ioPort & Y_STEP_BIT){
+		if (ioPort & Y_DIRECTION_BIT){
 			HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_SET);
 		} else {
 			HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
 		}
 	}
-	if (STEPDIR & A_STEP_BIT){
+	if (ioPort & A_STEP_BIT){
 		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_SET);
 	}
-	if (STEPDIR & B_STEP_BIT){
+	if (ioPort & B_STEP_BIT){
 		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP2_STP_Pin, GPIO_PIN_SET);
 	}
 #endif
@@ -726,7 +726,7 @@ void st_reset()
   GPIO_Write(DIRECTION_PORT, (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK));
 #endif
 #ifdef STM32F407xx
-  STEPDIR = 0;
+  ioPort = 0;
   HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_RESET);
   HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_RESET);
   HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_RESET);

@@ -69,7 +69,7 @@ extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 extern uint8_t rx_byte;
 extern void processUARTByte (void);
-extern volatile uint32_t LIMITPORT;
+extern volatile uint32_t ioPort;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -266,17 +266,17 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 	 !HAL_GPIO_ReadPin(X_L2_GPIO_Port, X_L2_Pin) |
 	 !HAL_GPIO_ReadPin(X_L3_GPIO_Port, X_L3_Pin) |
 	 !HAL_GPIO_ReadPin(X_L4_GPIO_Port, X_L4_Pin)){
-	  LIMIT_PORT |= (1 << X_LIMIT_BIT);
+	  ioPort |= (1 << X_LIMIT_BIT);
   }
   if(!HAL_GPIO_ReadPin(Y_L1_GPIO_Port, Y_L1_Pin) |
 	 !HAL_GPIO_ReadPin(Y_L2_GPIO_Port, Y_L2_Pin) |
 	 !HAL_GPIO_ReadPin(Y_L3_GPIO_Port, Y_L3_Pin) |
 	 !HAL_GPIO_ReadPin(Y_L4_GPIO_Port, Y_L4_Pin)){
-	  LIMIT_PORT |= (1 << Y_LIMIT_BIT);
+	  ioPort |= (1 << Y_LIMIT_BIT);
   }
-  if (prevLIMITPORT != LIMITPORT){
-	  prevLIMITPORT = LIMITPORT;
-
+  if (prevLIMITPORT != ioPort){
+	  prevLIMITPORT = ioPort;
+	  grbl_EXTI15_10_IRQHandler();
   }
 
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */

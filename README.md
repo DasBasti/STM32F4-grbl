@@ -7,7 +7,7 @@ Used with this hardware [Interface Board](https://bitbucket.org/kurzschluss/stm2
 Things to remember
 ------------------
 * To start remove M82 from start code in openpnp
-* PLACEMAT_STEP_SET (cpu_map_stm32.h) needs to be checked in vitro to set the signal high  or low active
+* PLACEMAT_STEP_SET (cpu_map_stm32.h) needs to be checked in vitro to set the signal high or low active
 * PlaceMat Stepper driver work with CW and CCW pulses not STP/DIR like the regualt grbl driver. This is adressed in stepper.c code
 
 Error Codes
