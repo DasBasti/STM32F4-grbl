@@ -193,11 +193,11 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+	SEGGER_SYSVIEW_RecordEnterISR();
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+  SEGGER_SYSVIEW_RecordExitISR();
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -214,7 +214,6 @@ void SysTick_Handler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
@@ -228,7 +227,6 @@ void TIM2_IRQHandler(void)
 void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
-
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
   /* USER CODE BEGIN TIM3_IRQn 1 */
@@ -242,7 +240,6 @@ void TIM3_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
@@ -257,21 +254,20 @@ void USART2_IRQHandler(void)
 void TIM8_TRG_COM_TIM14_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_TRG_COM_TIM14_IRQn 0 */
-
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 0 */
   HAL_TIM_IRQHandler(&htim14);
   /* USER CODE BEGIN TIM8_TRG_COM_TIM14_IRQn 1 */
 // We patch the inputs to the correct ports for grbl and trigger interrups here
-  if(!HAL_GPIO_ReadPin(X_L1_GPIO_Port, X_L1_Pin) |
+  if(HAL_GPIO_ReadPin(X_L1_GPIO_Port, X_L1_Pin)/* |
 	 !HAL_GPIO_ReadPin(X_L2_GPIO_Port, X_L2_Pin) |
 	 !HAL_GPIO_ReadPin(X_L3_GPIO_Port, X_L3_Pin) |
-	 !HAL_GPIO_ReadPin(X_L4_GPIO_Port, X_L4_Pin)){
+	 !HAL_GPIO_ReadPin(X_L4_GPIO_Port, X_L4_Pin)*/){
 	  ioPort |= (1 << X_LIMIT_BIT);
   }
-  if(!HAL_GPIO_ReadPin(Y_L1_GPIO_Port, Y_L1_Pin) |
+  if(HAL_GPIO_ReadPin(Y_L1_GPIO_Port, Y_L1_Pin)/* |
 	 !HAL_GPIO_ReadPin(Y_L2_GPIO_Port, Y_L2_Pin) |
 	 !HAL_GPIO_ReadPin(Y_L3_GPIO_Port, Y_L3_Pin) |
-	 !HAL_GPIO_ReadPin(Y_L4_GPIO_Port, Y_L4_Pin)){
+	 !HAL_GPIO_ReadPin(Y_L4_GPIO_Port, Y_L4_Pin)*/){
 	  ioPort |= (1 << Y_LIMIT_BIT);
   }
   if (prevLIMITPORT != ioPort){
