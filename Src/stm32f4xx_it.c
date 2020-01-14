@@ -247,7 +247,7 @@ void USART2_IRQHandler(void)
   HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
   /* USER CODE END USART2_IRQn 1 */
 }
-
+static uint32_t led;
 /**
   * @brief This function handles TIM8 trigger and commutation interrupts and TIM14 global interrupt.
   */
@@ -275,6 +275,11 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 	  grbl_EXTI15_10_IRQHandler();
   }
 
+  // Run LED
+  if(led++ == 500){
+	  HAL_GPIO_TogglePin(RUN_GPIO_Port, RUN_Pin);
+	  led = 0;
+  }
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */
 }
 

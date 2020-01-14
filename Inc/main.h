@@ -96,6 +96,8 @@ void Error_Handler(void);
 #define SP_2_GPIO_Port GPIOF
 #define SP_3_Pin GPIO_PIN_0
 #define SP_3_GPIO_Port GPIOC
+#define RUN_Pin GPIO_PIN_3
+#define RUN_GPIO_Port GPIOA
 #define SP_4_Pin GPIO_PIN_5
 #define SP_4_GPIO_Port GPIOA
 #define SP_5_Pin GPIO_PIN_6
