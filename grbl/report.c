@@ -35,7 +35,7 @@ static void report_util_line_feed() { printPgmString(PSTR("\r\n")); }
 static void report_util_feedback_line_feed() { serial_write(']'); report_util_line_feed(); }
 static void report_util_gcode_modes_G() { printPgmString(PSTR(" G")); }
 static void report_util_gcode_modes_M() { printPgmString(PSTR(" M")); }
-// static void report_util_comment_line_feed() { serial_write(')'); report_util_line_feed(); }
+static void report_util_comment_line_feed() { serial_write(')'); report_util_line_feed(); }
 static void report_util_axis_values(float *axis_value) {
   uint8_t idx;
   for (idx=0; idx<N_AXIS; idx++) {
@@ -44,7 +44,6 @@ static void report_util_axis_values(float *axis_value) {
   }
 }
 
-/*
 static void report_util_setting_string(uint8_t n) {
   serial_write(' ');
   serial_write('(');
@@ -89,17 +88,19 @@ static void report_util_setting_string(uint8_t n) {
   }
   report_util_comment_line_feed();
 }
-*/
+
 
 static void report_util_uint8_setting(uint8_t n, int val) {
   report_util_setting_prefix(n);
   print_uint8_base10(val);
-  report_util_line_feed(); // report_util_setting_string(n); 
+  report_util_line_feed();
+  report_util_setting_string(n);
 }
 static void report_util_float_setting(uint8_t n, float val, uint8_t n_decimal) {
   report_util_setting_prefix(n);
   printFloat(val, n_decimal);
-  report_util_line_feed(); // report_util_setting_string(n);
+  report_util_line_feed();
+  report_util_setting_string(n);
 }
 
 // Handles the primary confirmation protocol response for streaming interfaces and human-feedback.
@@ -571,9 +572,21 @@ void report_realtime_status()
     printPgmString(PSTR("|Pn:"));
     if (prb_pin_state) { serial_write('P'); }
     if (lim_pin_state) {
+#ifdef X_AXIS
       if (bit_istrue(lim_pin_state, bit(X_AXIS))) { serial_write('X'); }
+#endif
+#ifdef Y_AXIS
       if (bit_istrue(lim_pin_state, bit(Y_AXIS))) { serial_write('Y'); }
+#endif
+#ifdef Z_AXIS
       if (bit_istrue(lim_pin_state, bit(Z_AXIS))) { serial_write('Z'); }
+#endif
+#ifdef A_AXIS
+      if (bit_istrue(lim_pin_state, bit(A_AXIS))) { serial_write('A'); }
+#endif
+#ifdef B_AXIS
+      if (bit_istrue(lim_pin_state, bit(B_AXIS))) { serial_write('B'); }
+#endif
     }
     if (ctrl_pin_state) {
 #ifdef ENABLE_SAFETY_DOOR_INPUT_PIN

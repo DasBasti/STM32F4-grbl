@@ -50,7 +50,6 @@ unsigned char EE_Buffer[0x400];
 #if defined (STM32F407xx)
 #include <string.h>
 #include "settings.h"
-#include "stm32f4xx_hal.h"
 unsigned char EE_Buffer[0x400];
 
 #endif
@@ -140,7 +139,7 @@ unsigned char eeprom_get_char( unsigned int addr )
 #if defined(STM32F103C8)
 	return EE_Buffer[addr];
 #endif
-#if defined(STM32F407xx)
+#ifdef STM32F407xx
 	return EE_Buffer[addr];
 #endif
 }

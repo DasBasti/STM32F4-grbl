@@ -31,10 +31,11 @@ void TIM_Configuration(TIM_TypeDef* TIMER, u16 Period, u16 Prescaler, u8 PP);
 
 #ifdef STM32F407xx
 typedef int bool;
-#include "stm32f4xx_hal_rcc.h"
-#include "stm32f4xx_hal_tim.h"
+#include "stm32f4xx_hal.h"
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
 //#include "misc.h"
-void TIM_Configuration(TIM_TypeDef* TIMER, uint16_t Period, uint16_t Prescaler, uint8_t PP);
+volatile uint32_t ioPort;
 #endif
 
 // Some useful constants.
@@ -53,20 +54,20 @@ const PORTPINDEF step_pin_mask[N_AXIS] =
 {
 	1 << X_STEP_BIT,
 	1 << Y_STEP_BIT,
-	1 << Z_STEP_BIT,
-
+	1 << A_STEP_BIT,
+	1 << B_STEP_BIT,
 };
 const PORTPINDEF direction_pin_mask[N_AXIS] =
 {
 	1 << X_DIRECTION_BIT,
 	1 << Y_DIRECTION_BIT,
-	1 << Z_DIRECTION_BIT,
+	1 << A_DIRECTION_BIT,
+	1 << B_DIRECTION_BIT,
 };
 const PORTPINDEF limit_pin_mask[N_AXIS] =
 {
 	1 << X_LIMIT_BIT,
 	1 << Y_LIMIT_BIT,
-	1 << Z_LIMIT_BIT,
 };
 
 // Define Adaptive Multi-Axis Step-Smoothing(AMASS) levels and cutoff frequencies. The highest level
@@ -131,7 +132,8 @@ typedef struct {
   // Used by the bresenham line algorithm
   uint32_t counter_x,        // Counter variables for the bresenham line tracer
            counter_y,
-           counter_z;
+           counter_a,
+		   counter_b;
   #ifdef STEP_PULSE_DELAY
     uint8_t step_bits;  // Stores out_bits output to complete the step pulse delay
   #endif
@@ -250,13 +252,11 @@ void st_wake_up()
   // Enable stepper drivers.
   if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) 
   { 
-	  // TODO
-	  //SetStepperDisableBit();
+	  SetStepperDisableBit();
   }
   else 
   { 
-	  // TODO
-	  //ResetStepperDisableBit();
+	  ResetStepperDisableBit();
   }
 
   // Initialize stepper output bits to ensure first ISR call does not step.
@@ -294,6 +294,21 @@ void st_wake_up()
   TIM2->EGR = TIM_PSCReloadMode_Immediate;
   NVIC_EnableIRQ(TIM2_IRQn);
 #endif
+#if defined (STM32F407xx)
+  htim3.Instance->ARR = st.step_pulse_time - 1;
+  htim3.Instance->EGR = TIM_EGR_UG;
+
+  HAL_NVIC_ClearPendingIRQ(TIM3_IRQn);
+
+  htim2.Instance->ARR = st.exec_segment->cycles_per_tick - 1;
+  /* Set the Autoreload value */
+#ifndef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
+  htim2.Instance->PSC = st.exec_segment->prescaler;
+#endif
+  htim2.Instance->EGR = TIM_EGR_UG;
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
+  HAL_TIM_Base_Start_IT(&htim2);
+#endif
 }
 
 
@@ -310,6 +325,9 @@ void st_go_idle()
   NVIC_DisableIRQ(TIM2_IRQn);
 #endif
 
+#ifdef STM32F407xx
+  HAL_NVIC_DisableIRQ(TIM2_IRQn);
+#endif
   busy = false;
 
   // Set stepper driver idle state, disabled or enabled, depending on settings and circumstances.
@@ -323,13 +341,11 @@ void st_go_idle()
   if (bit_istrue(settings.flags,BITFLAG_INVERT_ST_ENABLE)) { pin_state = !pin_state; } // Apply pin invert.
   if (pin_state) 
   { 
-	  //TODO
-	  //SetStepperDisableBit();
+	  SetStepperDisableBit();
   }
   else 
   { 
-	  //TODO
-	  //ResetStepperDisableBit();
+	  ResetStepperDisableBit();
   }
 }
 
@@ -386,12 +402,13 @@ void st_go_idle()
 void TIM2_IRQHandler(void)
 #endif
 #ifdef STM32F407xx
-void TIM2_IRQHandler(void)
+void grbl_TIM2_IRQHandler(void)
 #endif
 #ifdef AVRTARGET
 ISR(TIMER1_COMPA_vect)
 #endif
 {
+// on STM32F4 HAL this is done by HAL
 #ifdef STM32F103C8
 	if ((TIM2->SR & 0x0001) != 0)                  // check interrupt source
 	{
@@ -405,13 +422,18 @@ ISR(TIMER1_COMPA_vect)
 #endif
 
   if (busy) { return; } // The busy-flag is used to avoid reentering this interrupt
-#ifdef AVRTARGET
+
   // Set the direction pins a couple of nanoseconds before we step the steppers
+#ifdef AVRTARGET
   DIRECTION_PORT = (DIRECTION_PORT & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK);
 #endif
 #ifdef STM32F103C8
   GPIO_Write(DIRECTION_PORT, (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK));
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+#endif
+#ifdef STM32F407xx // set dir pins of aux stepper driver. X/Y stepper driver have a CW and CCW puls line that is served during stepping
+  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (ioPort & A_DIRECTION_BIT));
+  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (ioPort & B_DIRECTION_BIT));
 #endif
 
   // Then pulse the stepping pins
@@ -424,6 +446,28 @@ ISR(TIMER1_COMPA_vect)
 #ifdef STM32F103C8
 	GPIO_Write(STEP_PORT, (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | st.step_outbits);
 #endif
+#ifdef STM32F407xx
+	if (ioPort & X_STEP_BIT){
+		if (ioPort & X_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
+			HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_SET);
+		} else {
+			HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_SET);
+		}
+	}
+	if (ioPort & Y_STEP_BIT){
+		if (ioPort & Y_DIRECTION_BIT){
+			HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_SET);
+		} else {
+			HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
+		}
+	}
+	if (ioPort & A_STEP_BIT){
+		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_SET);
+	}
+	if (ioPort & B_STEP_BIT){
+		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP2_STP_Pin, GPIO_PIN_SET);
+	}
+#endif
   #endif
 
   // Enable step pulse reset timer so that The Stepper Port Reset Interrupt can reset the signal after
@@ -435,7 +479,10 @@ ISR(TIMER1_COMPA_vect)
 #ifdef STM32F103C8
   NVIC_EnableIRQ(TIM3_IRQn);
 #endif
-
+#ifdef STM32F407xx
+  HAL_NVIC_EnableIRQ(TIM3_IRQn);
+  HAL_TIM_Base_Start_IT(&htim3);
+#endif
   busy = true;
 #ifdef AVRTARGET
   sei(); // Re-enable interrupts to allow Stepper Port Reset Interrupt to fire on-time.
@@ -467,6 +514,13 @@ ISR(TIMER1_COMPA_vect)
 	  TIM2->PSC = st.exec_segment->prescaler;
 #endif
 #endif
+#ifdef STM32F407xx
+	  htim2.Instance->ARR = st.exec_segment->cycles_per_tick - 1;
+	  /* Set the Autoreload value */
+#ifndef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
+	  htim2.Instance->PSC = st.exec_segment->prescaler;
+#endif
+#endif
       st.step_count = st.exec_segment->n_step; // NOTE: Can sometimes be zero when moving slow.
       // If the new segment starts a new planner block, initialize stepper variables and counters.
       // NOTE: When the segment data index changes, this indicates a new planner block.
@@ -475,7 +529,7 @@ ISR(TIMER1_COMPA_vect)
         st.exec_block = &st_block_buffer[st.exec_block_index];
 
         // Initialize Bresenham line and distance counters
-        st.counter_x = st.counter_y = st.counter_z = (st.exec_block->step_event_count >> 1);
+        st.counter_x = st.counter_y = st.counter_a = (st.exec_block->step_event_count >> 1);
       }
       st.dir_outbits = st.exec_block->direction_bits ^ dir_port_invert_mask;
 
@@ -483,7 +537,8 @@ ISR(TIMER1_COMPA_vect)
         // With AMASS enabled, adjust Bresenham axis increment counters according to AMASS level.
         st.steps[X_AXIS] = st.exec_block->steps[X_AXIS] >> st.exec_segment->amass_level;
         st.steps[Y_AXIS] = st.exec_block->steps[Y_AXIS] >> st.exec_segment->amass_level;
-        st.steps[Z_AXIS] = st.exec_block->steps[Z_AXIS] >> st.exec_segment->amass_level;
+        st.steps[A_AXIS] = st.exec_block->steps[A_AXIS] >> st.exec_segment->amass_level;
+        st.steps[B_AXIS] = st.exec_block->steps[B_AXIS] >> st.exec_segment->amass_level;
       #endif
 
       #ifdef VARIABLE_SPINDLE
@@ -534,15 +589,22 @@ ISR(TIMER1_COMPA_vect)
     else { sys_position[Y_AXIS]++; }
   }
   #ifdef ADAPTIVE_MULTI_AXIS_STEP_SMOOTHING
-    st.counter_z += st.steps[Z_AXIS];
+    st.counter_a += st.steps[Z_AXIS];
   #else
-    st.counter_z += st.exec_block->steps[Z_AXIS];
+    st.counter_a += st.exec_block->steps[A_AXIS];
+    st.counter_b += st.exec_block->steps[B_AXIS];
   #endif
-  if (st.counter_z > st.exec_block->step_event_count) {
-    st.step_outbits |= (1<<Z_STEP_BIT);
-    st.counter_z -= st.exec_block->step_event_count;
-    if (st.exec_block->direction_bits & (1<<Z_DIRECTION_BIT)) { sys_position[Z_AXIS]--; }
-    else { sys_position[Z_AXIS]++; }
+  if (st.counter_a > st.exec_block->step_event_count) {
+    st.step_outbits |= (1<<A_STEP_BIT);
+    st.counter_a -= st.exec_block->step_event_count;
+    if (st.exec_block->direction_bits & (1<<A_DIRECTION_BIT)) { sys_position[A_AXIS]--; }
+    else { sys_position[A_AXIS]++; }
+  }
+  if (st.counter_b > st.exec_block->step_event_count) {
+    st.step_outbits |= (1<<B_STEP_BIT);
+    st.counter_b -= st.exec_block->step_event_count;
+    if (st.exec_block->direction_bits & (1<<B_DIRECTION_BIT)) { sys_position[B_AXIS]--; }
+    else { sys_position[B_AXIS]++; }
   }
 
   // During a homing cycle, lock out and prevent desired axes from moving.
@@ -580,7 +642,7 @@ ISR(TIMER1_COMPA_vect)
 void TIM3_IRQHandler(void)
 #endif
 #ifdef STM32F407xx
-void TIM3_IRQHandler(void)
+void grbl_TIM3_IRQHandler(void)
 #endif
 #ifdef AVRTARGET
 ISR(TIMER0_OVF_vect)
@@ -599,6 +661,14 @@ ISR(TIMER0_OVF_vect)
   // Reset stepping pins (leave the direction pins)
   STEP_PORT = (STEP_PORT & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
   TCCR0B = 0; // Disable Timer0 to prevent re-entering this interrupt when it's not needed.
+#endif
+#ifdef STM32F407xx
+  HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP2_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
 #endif
 }
 #ifdef STEP_PULSE_DELAY
@@ -656,9 +726,15 @@ void st_reset()
   GPIO_Write(DIRECTION_PORT, (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK));
 #endif
 #ifdef STM32F407xx
-  //TODO
-  STEP_PORT->ODR = (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | (step_port_invert_mask & STEP_MASK);
-  DIRECTION_PORT->ODR = (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (dir_port_invert_mask & DIRECTION_MASK);
+  ioPort = 0;
+  HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_RESET);
+  HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP2_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP1_DIR_Pin, GPIO_PIN_RESET);
 #endif
 }
 
@@ -667,6 +743,10 @@ void stepper_init()
 {
   //STM32F4 has Pins configured by CubeMX
   // Configure step and direction interface pins
+#ifdef STM32F407xx
+	HAL_NVIC_DisableIRQ(TIM3_IRQn);
+	HAL_NVIC_DisableIRQ(TIM2_IRQn);
+#endif
 #ifdef STM32F103C8
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_STEPPERS_DISABLE_PORT, ENABLE);
