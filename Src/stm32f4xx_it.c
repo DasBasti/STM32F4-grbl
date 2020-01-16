@@ -46,6 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 uint32_t prevLIMITPORT;
+static uint32_t led;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -245,7 +246,7 @@ void USART2_IRQHandler(void)
   HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
   /* USER CODE END USART2_IRQn 1 */
 }
-static uint32_t led;
+
 /**
   * @brief This function handles TIM8 trigger and commutation interrupts and TIM14 global interrupt.
   */

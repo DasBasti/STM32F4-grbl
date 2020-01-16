@@ -440,9 +440,9 @@ void system_set_exec_state_flag(uint8_t mask) {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_state |= (mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -454,9 +454,9 @@ void system_clear_exec_state_flag(uint8_t mask) {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_state &= ~(mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -468,9 +468,9 @@ void system_set_exec_alarm(uint8_t code) {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_alarm |= (code);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -482,9 +482,9 @@ void system_clear_exec_alarm() {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_alarm = 0;
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -496,9 +496,9 @@ void system_set_exec_motion_override_flag(uint8_t mask) {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_motion_override |= (mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -510,9 +510,9 @@ void system_set_exec_accessory_override_flag(uint8_t mask) {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_accessory_override |= (mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -524,9 +524,9 @@ void system_clear_exec_motion_overrides() {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_motion_override = 0;
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -538,8 +538,8 @@ void system_clear_exec_accessory_overrides() {
   SREG = sreg;
 #endif
 #if defined(STM32F103C8) || defined(STM32F407xx)
-  __disable_irq();
+  //__disable_irq();
   sys_rt_exec_accessory_override = 0;
-  __enable_irq();
+  //__enable_irq();
 #endif
 }

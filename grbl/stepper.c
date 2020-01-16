@@ -432,8 +432,8 @@ ISR(TIMER1_COMPA_vect)
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 #endif
 #ifdef STM32F407xx // set dir pins of aux stepper driver. X/Y stepper driver have a CW and CCW puls line that is served during stepping
-  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (ioPort & A_DIRECTION_BIT));
-  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (ioPort & B_DIRECTION_BIT));
+  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (st.dir_outbits & (1 << A_DIRECTION_BIT)));
+  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (st.dir_outbits & (1 << B_DIRECTION_BIT)));
 #endif
 
   // Then pulse the stepping pins
@@ -447,24 +447,24 @@ ISR(TIMER1_COMPA_vect)
 	GPIO_Write(STEP_PORT, (GPIO_ReadOutputData(STEP_PORT) & ~STEP_MASK) | st.step_outbits);
 #endif
 #ifdef STM32F407xx
-	if (ioPort & X_STEP_BIT){
-		if (ioPort & X_DIRECTION_BIT){ // TODO: (basneu) find correct polarity for stepping in the right direction
+	if (st.step_outbits & (1 << X_STEP_BIT)){
+		if (st.dir_outbits & (1 << X_DIRECTION_BIT)){ // TODO: (basneu) find correct polarity for stepping in the right direction
 			HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, PLACEMAT_STEP_SET);
 		} else {
 			HAL_GPIO_WritePin(X_CW_GPIO_Port, X_CW_Pin, PLACEMAT_STEP_SET);
 		}
 	}
-	if (ioPort & Y_STEP_BIT){
-		if (ioPort & Y_DIRECTION_BIT){
+	if (st.step_outbits & (1 << Y_STEP_BIT)){
+		if (st.dir_outbits & (1 << Y_DIRECTION_BIT)){
 			HAL_GPIO_WritePin(Y_CCW_GPIO_Port, Y_CCW_Pin, PLACEMAT_STEP_SET);
 		} else {
 			HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_SET);
 		}
 	}
-	if (ioPort & A_STEP_BIT){
+	if (st.step_outbits & (1 << A_STEP_BIT)){
 		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_SET);
 	}
-	if (ioPort & B_STEP_BIT){
+	if (st.step_outbits & (1 << B_STEP_BIT)){
 		HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP2_STP_Pin, GPIO_PIN_SET);
 	}
 #endif
@@ -669,6 +669,7 @@ ISR(TIMER0_OVF_vect)
   HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, PLACEMAT_STEP_RESET);
   HAL_GPIO_WritePin(STP1_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(STP2_STP_GPIO_Port, STP1_STP_Pin, GPIO_PIN_RESET);
+  HAL_NVIC_DisableIRQ(TIM3_IRQn);
 #endif
 }
 #ifdef STEP_PULSE_DELAY
