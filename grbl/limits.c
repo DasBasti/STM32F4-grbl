@@ -216,7 +216,7 @@ ISR(WDT_vect) // Watchdog timer ISR
  */
 void grbl_EXTI15_10_IRQHandler(void)
 {
-	if ((ioPort & (1 << X_LIMIT_BIT)) != RESET)
+/*	if ((ioPort & (1 << X_LIMIT_BIT)) != RESET)
 	{
 		ioPort &= ~(1 << X_LIMIT_BIT);
 	}
@@ -224,7 +224,7 @@ void grbl_EXTI15_10_IRQHandler(void)
 	{
 		ioPort &= ~(1 << Y_LIMIT_BIT);
 	}
-  // Ignore limit switches if already in an alarm state or in-process of executing an alarm.
+*/  // Ignore limit switches if already in an alarm state or in-process of executing an alarm.
   // When in the alarm state, Grbl should have been reset or will force a reset, so any pending
   // moves in the planner and serial buffers are all cleared and newly sent blocks will be
   // locked out until a homing cycle or a kill lock command. Allows the user to disable the hard
