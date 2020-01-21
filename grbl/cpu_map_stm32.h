@@ -160,6 +160,7 @@ extern volatile uint32_t ioPort;
 #define B_LIMIT_BIT 12
 // Axis A/B do not have limit switches
 #define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT) | (1 << A_LIMIT_BIT) | (1 << B_LIMIT_BIT)) // All limit bits
+#define IGNORE_LIMITS_BIT 13
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_PORT GPIOB
@@ -238,7 +239,7 @@ extern volatile uint32_t ioPort;
 //   10		Z_LIMIT
 //   11		A_LIMIT
 //   12		B_LIMIT
-//   13
+//   13		IGNORE_LIMITS
 //   14
 //   15
 //   16

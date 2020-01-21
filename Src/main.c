@@ -127,7 +127,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-   HAL_Init();
+  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -638,17 +638,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : CCW_SW_Pin CW_SW_Pin M_CENTER_Pin Y_HM_Pin */
-  GPIO_InitStruct.Pin = CCW_SW_Pin|CW_SW_Pin|M_CENTER_Pin|Y_HM_Pin;
+  /*Configure GPIO pins : CCW_SW_Pin CW_SW_Pin M_CENTER_Pin Y_HM_Pin 
+                           Y_L4_Pin Y_L3_Pin Y_L2_Pin */
+  GPIO_InitStruct.Pin = CCW_SW_Pin|CW_SW_Pin|M_CENTER_Pin|Y_HM_Pin 
+                          |Y_L4_Pin|Y_L3_Pin|Y_L2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Y_L4_Pin Y_L3_Pin Y_L2_Pin Y_L1_Pin */
-  GPIO_InitStruct.Pin = Y_L4_Pin|Y_L3_Pin|Y_L2_Pin|Y_L1_Pin;
+  /*Configure GPIO pin : Y_L1_Pin */
+  GPIO_InitStruct.Pin = Y_L1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(Y_L1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : Y_CW_Pin */
   GPIO_InitStruct.Pin = Y_CW_Pin;
@@ -680,19 +682,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(X_CCW_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : X_L1_Pin X_L2_Pin X_L3_Pin X_L4_Pin 
-                           X_HM_Pin T_HEAD_Pin */
-  GPIO_InitStruct.Pin = X_L1_Pin|X_L2_Pin|X_L3_Pin|X_L4_Pin 
-                          |X_HM_Pin|T_HEAD_Pin;
+  /*Configure GPIO pins : X_L1_Pin T_VAC_Pin */
+  GPIO_InitStruct.Pin = X_L1_Pin|T_VAC_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : X_L2_Pin X_L3_Pin X_L4_Pin X_HM_Pin 
+                           T_HEAD_Pin */
+  GPIO_InitStruct.Pin = X_L2_Pin|X_L3_Pin|X_L4_Pin|X_HM_Pin 
+                          |T_HEAD_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : T_VAC_Pin */
-  GPIO_InitStruct.Pin = T_VAC_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(T_VAC_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : TEACH_Pin Y_MINUS_Pin Y_PLUS_Pin X_MINUS_Pin 
                            X_PLUS_Pin */

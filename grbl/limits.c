@@ -86,6 +86,9 @@ void limits_init()
 		limits_disable();
 	}
 #endif
+#ifdef STM32F407xx
+	ioPort &= ~(1<< IGNORE_LIMITS_BIT);
+#endif
 }
 
 
@@ -99,6 +102,10 @@ void limits_disable()
 #ifdef STM32F103C8
   NVIC_DisableIRQ(EXTI15_10_IRQn);
 #endif
+#ifdef STM32F407xx
+  ioPort |= (1 << IGNORE_LIMITS_BIT);
+#endif
+
 }
 
 

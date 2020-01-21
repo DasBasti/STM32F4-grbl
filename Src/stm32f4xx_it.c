@@ -262,16 +262,22 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 	 !HAL_GPIO_ReadPin(X_L3_GPIO_Port, X_L3_Pin) |
 	 !HAL_GPIO_ReadPin(X_L4_GPIO_Port, X_L4_Pin)*/){
 	  ioPort |= (1 << X_LIMIT_BIT);
+  } else {
+	  ioPort &= ~(1 << X_LIMIT_BIT);
   }
   if(HAL_GPIO_ReadPin(Y_L1_GPIO_Port, Y_L1_Pin)/* |
 	 !HAL_GPIO_ReadPin(Y_L2_GPIO_Port, Y_L2_Pin) |
 	 !HAL_GPIO_ReadPin(Y_L3_GPIO_Port, Y_L3_Pin) |
 	 !HAL_GPIO_ReadPin(Y_L4_GPIO_Port, Y_L4_Pin)*/){
 	  ioPort |= (1 << Y_LIMIT_BIT);
+  } else {
+	  ioPort &= ~(1 << Y_LIMIT_BIT);
   }
   if (prevLIMITPORT != ioPort){
 	  prevLIMITPORT = ioPort;
-	  grbl_EXTI15_10_IRQHandler();
+	  if(((ioPort & IGNORE_LIMITS_BIT) != 0)){ // only call if irq is activated
+		  grbl_EXTI15_10_IRQHandler();
+	  }
   }
 
   // Run LED
