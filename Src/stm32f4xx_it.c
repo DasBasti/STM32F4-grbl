@@ -280,6 +280,11 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 	  }
   }
 
+  // read HOME button and execute homing cycle if press is detected
+  if(!HAL_GPIO_ReadPin(M_ORG_GPIO_Port, M_ORG_Pin)){
+	  system_execute_line("$H");
+  }
+
   // Run LED
   if(led++ == 500){
 	  HAL_GPIO_TogglePin(RUN_GPIO_Port, RUN_Pin);
