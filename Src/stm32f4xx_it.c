@@ -25,7 +25,7 @@
 /* USER CODE BEGIN Includes */
 #define CPU_MAP_STM32F407 // Load pin configuration for STM32F407
 #include "cpu_map_stm32.h"
-
+#include "grbl.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
