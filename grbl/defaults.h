@@ -522,7 +522,7 @@
 #define DEFAULT_HOMING_ENABLE 1  // false
 #define DEFAULT_HOMING_DIR_MASK 3 // move positive dir
 #define DEFAULT_HOMING_FEED_RATE 150.0f // mm/min
-#define DEFAULT_HOMING_SEEK_RATE 150.0f // mm/min
+#define DEFAULT_HOMING_SEEK_RATE 1500.0f // mm/min
 #define DEFAULT_HOMING_DEBOUNCE_DELAY 250 // msec (0-65k)
 #define DEFAULT_HOMING_PULLOFF 5.0f // mm
 // TODO: remove unavailable functions from code at some point
