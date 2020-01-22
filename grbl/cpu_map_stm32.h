@@ -118,41 +118,49 @@
 #endif // CPU_MAP_STM32F103
 
 #ifdef CPU_MAP_STM32F407
+#include "main.h" // include GPIO pin names from Cube project
+// Since we do not have the stepper connected directly to the corresponding ports on the chip we need to work around this issue
+// with a temporary buffer 'PORT'
+// This 'PORT' is read and the correct pins are set high or low depending on the values in Timer3 ISR
+extern volatile uint32_t ioPort;
+
 
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
-#define STEP_PORT GPIOB
 #define X_STEP_BIT 0
 #define Y_STEP_BIT 1
-#define Z_STEP_BIT -1
-#define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT)) // All step bits
+#define A_STEP_BIT 2
+#define B_STEP_BIT 3
+#define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << A_STEP_BIT) | (1 << B_STEP_BIT)) // All step bits
 
 // Define step direction output pins. NOTE: All direction pins must be on the same port.
-#define DIRECTION_PORT GPIOA
-#define RCC_DIRECTION_PORT RCC_APB2Periph_GPIOA
-#define X_DIRECTION_BIT 3
-#define Y_DIRECTION_BIT 4
-#define Z_DIRECTION_BIT 5
-#define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT)) // All direction bits
+#define X_DIRECTION_BIT 4
+#define Y_DIRECTION_BIT 5
+#define A_DIRECTION_BIT 6
+#define B_DIRECTION_BIT 7
+#define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << A_DIRECTION_BIT) | (1 << B_DIRECTION_BIT)) // All direction bits
 
 // Define stepper driver enable/disable output pin.
-#define STEPPERS_DISABLE_PORT GPIOA
-#define RCC_STEPPERS_DISABLE_PORT RCC_APB2Periph_GPIOA
-#define STEPPERS_DISABLE_BIT 6
-#define STEPPERS_DISABLE_MASK (1 << STEPPERS_DISABLE_BIT)
-#define SetStepperDisableBit() GPIO_SetBits(STEPPERS_DISABLE_PORT, STEPPERS_DISABLE_MASK)
-#define ResetStepperDisableBit() GPIO_ResetBits(STEPPERS_DISABLE_PORT, STEPPERS_DISABLE_MASK)
+// We use HAL functions directly to disable the Stepper Pins from here. X/Y axis do not have enable pins.
+#define SetStepperDisableBit() {\
+	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);\
+	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_SET);\
+}
+#define ResetStepperDisableBit() {\
+	HAL_GPIO_WritePin(STP1_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);\
+	HAL_GPIO_WritePin(STP2_nEN_GPIO_Port, STP1_nEN_Pin, GPIO_PIN_RESET);\
+}
 
 // Define homing/hard limit switch input pins and limit interrupt vectors.
 // NOTE: All limit bit pins must be on the same port
-#define LIMIT_PIN GPIOB
-#define LIMIT_PORT GPIOB
-#define RCC_LIMIT_PORT RCC_APB2Periph_GPIOB
-#define GPIO_LIMIT_PORT GPIO_PortSourceGPIOB
-#define X_LIMIT_BIT 10
-#define Y_LIMIT_BIT 11
-#define Z_LIMIT_BIT 12
-
-#define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT)) // All limit bits
+// TODO: optimize this bit? or leave it if it works ok
+#define X_LIMIT_BIT 8
+#define Y_LIMIT_BIT 9
+#define Z_LIMIT_BIT 10
+#define A_LIMIT_BIT 11
+#define B_LIMIT_BIT 12
+// Axis A/B do not have limit switches
+#define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT) | (1 << A_LIMIT_BIT) | (1 << B_LIMIT_BIT)) // All limit bits
+#define IGNORE_LIMITS_BIT 13
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_PORT GPIOB
@@ -179,15 +187,20 @@
 
 // Define user-control controls (cycle start, reset, feed hold) input pins.
 // NOTE: All CONTROLs pins must be on the same port and not on a port with other input pins (limits).
-#define CONTROL_PIN_PORT GPIOB
-#define CONTROL_PORT GPIOB
-#define RCC_CONTROL_PORT RCC_APB2Periph_GPIOB
-#define GPIO_CONTROL_PORT GPIO_PortSourceGPIOB
-#define CONTROL_RESET_BIT 5
-#define CONTROL_FEED_HOLD_BIT 6
-#define CONTROL_CYCLE_START_BIT 7
-#define CONTROL_SAFETY_DOOR_BIT 8
-#define CONTROL_MASK ((1 << CONTROL_RESET_BIT) | (1 << CONTROL_FEED_HOLD_BIT) | (1 << CONTROL_CYCLE_START_BIT) | (1 << CONTROL_SAFETY_DOOR_BIT))
+#define CONTROL_PIN_PORT ioPort;
+#define CONTROL_FAST_BIT 28
+#define CONTROL_TEACH_BIT 27
+#define CONTROL_X_PLUS_BIT 26
+#define CONTROL_X_MINUS_BIT 25
+#define CONTROL_Y_PLUS_BIT 24
+#define CONTROL_Y_MINUS_BIT 23
+#define CONTROL_MASK ((1 << CONTROL_FAST_BIT) | (1 << CONTROL_TEACH_BIT) | (1 << CONTROL_X_PLUS_BIT) | (1 << CONTROL_X_MINUS_BIT) | (1 << CONTROL_Y_PLUS_BIT) | (1 << CONTROL_Y_MINUS_BIT))
+// unused information
+#define CONTROL_RESET_BIT 31
+#define CONTROL_FEED_HOLD_BIT 30
+#define CONTROL_CYCLE_START_BIT 29
+//#define CONTROL_SAFETY_DOOR_BIT 28
+
 
 // Define probe switch input pin.
 #define PROBE_PORT GPIOA
@@ -212,23 +225,41 @@
 #define SPINDLE_PWM_OFF_VALUE 0
 #define SPINDLE_PWM_RANGE (SPINDLE_PWM_MAX_VALUE - SPINDLE_PWM_MIN_VALUE)
 
-//  Port A                                         Port B
+//   IO Port                                          Port B
 //   0      X_STEP_BIT
 //   1      Y_STEP_BIT
-//   2      Z_STEP_BIT
-//   3      X_DIRECTION_BIT                       COOLANT_FLOOD_BIT
-//   4      Y_DIRECTION_BIT                       COOLANT_MIST_BIT
-//   5      Z_DIRECTION_BIT                       CONTROL_RESET_BIT
-//   6      STEPPERS_DISABLE_BIT                  CONTROL_FEED_HOLD_BIT
-//   7                                            CONTROL_CYCLE_START_BIT
-//   8      SPINDLE_PWM_BIT                       CONTROL_SAFETY_DOOR_BIT
-//   9
-//   10                                            X_LIMIT_BIT
-//   11                                            Y_LIMIT_BIT
-//   12                                            Z_LIMIT_BIT
-//   13 14 SWD																		SPINDLE_ENABLE_BIT
-//     14																						SPINDLE_DIRECTION_BIT
-//   15     PROBE_BIT
+//   2      A_STEP_BIT
+//   3		B_STEP_BIT
+//   4		X_DIRECTION_BIT
+//   5      Y_DIRECTION_BIT
+//   6      A_DIRECTION_BIT
+//   7		A_DIRECTION_BIT
+//   8		X_LIMIT
+//   9		Y_LIMIT
+//   10		Z_LIMIT
+//   11		A_LIMIT
+//   12		B_LIMIT
+//   13		IGNORE_LIMITS
+//   14
+//   15
+//   16
+//   17
+//   18
+//   19
+//   20
+//   21
+//   22
+//   23		CONTROL_Y_MINUS
+//   24		CONTROL_Y_PLUS
+//   25		CONTROL_X_MINUS
+//   26		CONTROL_X_PLUS
+//   27		CONTROL_TEACH
+//   28		CONTROL_FAST
+//   29		CONTROL_CYCLE_START
+//   30		CONTROL_FEED_HOLD
+//   31     CONTROL_RESET
+// NOTE: We include inline functions to convert from the hardware interface that grbl expects to one that is available in the machine
+
 
 #endif // CPU_MAP_STM32F103
 

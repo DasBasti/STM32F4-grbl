@@ -80,7 +80,14 @@ uint8_t system_control_get_state()
   uint16_t pin= GPIO_ReadInputData(CONTROL_PIN_PORT);
 #endif
 #ifdef STM32F407xx
-  uint16_t pin= GPIO_ReadInputData(CONTROL_PIN_PORT);
+  // TODO: (basneu) read input values from CONTROL Port
+  uint32_t pin = 0;
+  pin |= HAL_GPIO_ReadPin(TEACH_GPIO_Port, TEACH_Pin) << CONTROL_FEED_HOLD_BIT; // TODO: (basneu) fix TEACH = FEED HOLD
+  pin |= HAL_GPIO_ReadPin(FAST_GPIO_Port, FAST_Pin) << CONTROL_RESET_BIT; // TODO: (basneu) fix FAST = RESET
+  pin |= HAL_GPIO_ReadPin(X_PLUS_GPIO_Port, X_PLUS_Pin) << CONTROL_X_PLUS_BIT;
+  pin |= HAL_GPIO_ReadPin(X_MINUS_GPIO_Port, X_MINUS_Pin) << CONTROL_X_MINUS_BIT;
+  pin |= HAL_GPIO_ReadPin(X_PLUS_GPIO_Port, Y_PLUS_Pin) << CONTROL_Y_PLUS_BIT;
+  pin |= HAL_GPIO_ReadPin(Y_MINUS_GPIO_Port, Y_MINUS_Pin) << CONTROL_Y_PLUS_BIT;
 #endif
   #ifdef INVERT_CONTROL_PIN_MASK
     pin ^= INVERT_CONTROL_PIN_MASK;
@@ -92,6 +99,10 @@ uint8_t system_control_get_state()
     if (bit_isfalse(pin,(1<<CONTROL_RESET_BIT))) { control_state |= CONTROL_PIN_INDEX_RESET; }
     if (bit_isfalse(pin,(1<<CONTROL_FEED_HOLD_BIT))) { control_state |= CONTROL_PIN_INDEX_FEED_HOLD; }
     if (bit_isfalse(pin,(1<<CONTROL_CYCLE_START_BIT))) { control_state |= CONTROL_PIN_INDEX_CYCLE_START; }
+    if (bit_isfalse(pin,(1<<CONTROL_X_PLUS_BIT))) { /*TODO: (basneu) movement */ }
+    if (bit_isfalse(pin,(1<<CONTROL_X_MINUS_BIT))) { /*TODO: (basneu) movement */ }
+    if (bit_isfalse(pin,(1<<CONTROL_Y_PLUS_BIT))) { /*TODO: (basneu) movement */ }
+    if (bit_isfalse(pin,(1<<CONTROL_Y_MINUS_BIT))) { /*TODO: (basneu) movement */ }
   }
   return(control_state);
 }
@@ -428,10 +439,10 @@ void system_set_exec_state_flag(uint8_t mask) {
   sys_rt_exec_state |= (mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_state |= (mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -442,10 +453,10 @@ void system_clear_exec_state_flag(uint8_t mask) {
   sys_rt_exec_state &= ~(mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_state &= ~(mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -456,10 +467,10 @@ void system_set_exec_alarm(uint8_t code) {
   sys_rt_exec_alarm = code;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_alarm |= (code);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -470,10 +481,10 @@ void system_clear_exec_alarm() {
   sys_rt_exec_alarm = 0;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_alarm = 0;
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -484,10 +495,10 @@ void system_set_exec_motion_override_flag(uint8_t mask) {
   sys_rt_exec_motion_override |= (mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_motion_override |= (mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -498,10 +509,10 @@ void system_set_exec_accessory_override_flag(uint8_t mask) {
   sys_rt_exec_accessory_override |= (mask);
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_accessory_override |= (mask);
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -512,10 +523,10 @@ void system_clear_exec_motion_overrides() {
   sys_rt_exec_motion_override = 0;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_motion_override = 0;
-  __enable_irq();
+  //__enable_irq();
 #endif
 }
 
@@ -526,9 +537,9 @@ void system_clear_exec_accessory_overrides() {
   sys_rt_exec_accessory_override = 0;
   SREG = sreg;
 #endif
-#ifdef STM32F103C8
-  __disable_irq();
+#if defined(STM32F103C8) || defined(STM32F407xx)
+  //__disable_irq();
   sys_rt_exec_accessory_override = 0;
-  __enable_irq();
+  //__enable_irq();
 #endif
 }

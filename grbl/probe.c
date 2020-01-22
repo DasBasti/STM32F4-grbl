@@ -72,6 +72,9 @@ uint8_t probe_get_state()
 #ifdef STM32F103C8
 	return ((GPIO_ReadInputData(PROBE_PORT) & PROBE_MASK) ^ probe_invert_mask) != 0;
 #endif
+#ifdef STM32F407xx
+	return 0; //(HAL_GPIO_ReadPin(PROBE_PORT, PROBE_BIT) ^ probe_invert_mask) != 0;
+#endif
 }
 
 

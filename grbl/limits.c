@@ -21,7 +21,6 @@
 
 #include "grbl.h"
 
-
 // Homing axis search distance multiplier. Computed by this value times the cycle travel.
 #ifndef HOMING_AXIS_SEARCH_SCALAR
   #define HOMING_AXIS_SEARCH_SCALAR  1.5f // Must be > 1 to ensure limit switch will be engaged.
@@ -87,6 +86,9 @@ void limits_init()
 		limits_disable();
 	}
 #endif
+#ifdef STM32F407xx
+	ioPort &= ~(1<< IGNORE_LIMITS_BIT);
+#endif
 }
 
 
@@ -100,6 +102,10 @@ void limits_disable()
 #ifdef STM32F103C8
   NVIC_DisableIRQ(EXTI15_10_IRQn);
 #endif
+#ifdef STM32F407xx
+  ioPort |= (1 << IGNORE_LIMITS_BIT);
+#endif
+
 }
 
 
@@ -109,12 +115,15 @@ void limits_disable()
 uint8_t limits_get_state()
 {
   uint8_t limit_state = 0;
-#if defined(AVRTARGET) || defined(STM32F103C8)
+#if defined(AVRTARGET) || defined(STM32F103C8) || defined(STM32F407xx)
 #if defined(AVRTARGET)
   uint8_t pin = (LIMIT_PIN & LIMIT_MASK);
 #endif
 #if defined(STM32F103C8)
   uint16_t pin = GPIO_ReadInputData(LIMIT_PIN);
+#endif
+#if defined(STM32F407xx)
+  uint16_t pin = (ioPort & LIMIT_MASK);
 #endif
   #ifdef INVERT_LIMIT_PIN_MASK
     pin ^= INVERT_LIMIT_PIN_MASK;
@@ -207,6 +216,44 @@ ISR(WDT_vect) // Watchdog timer ISR
 #error ENABLE_SOFTWARE_DEBOUNCE is not supported yet
 #endif
 #endif
+#ifdef STM32F407xx
+/*
+ * When using STM32F405 there is an interrupt polling inputs and using this routine to trigger a
+ * soft interrupt for IO pins.
+ */
+void grbl_EXTI15_10_IRQHandler(void)
+{
+/*	if ((ioPort & (1 << X_LIMIT_BIT)) != RESET)
+	{
+		ioPort &= ~(1 << X_LIMIT_BIT);
+	}
+	if ((ioPort & (1 << Y_LIMIT_BIT)) != RESET)
+	{
+		ioPort &= ~(1 << Y_LIMIT_BIT);
+	}
+*/  // Ignore limit switches if already in an alarm state or in-process of executing an alarm.
+  // When in the alarm state, Grbl should have been reset or will force a reset, so any pending
+  // moves in the planner and serial buffers are all cleared and newly sent blocks will be
+  // locked out until a homing cycle or a kill lock command. Allows the user to disable the hard
+  // limit setting if their limits are constantly triggering after a reset and move their axes.
+  if (sys.state != STATE_ALARM) {
+    if (!(sys_rt_exec_alarm)) {
+#ifdef HARD_LIMIT_FORCE_STATE_CHECK
+      // Check limit pin state.
+      if (limits_get_state()) {
+        mc_reset(); // Initiate system kill.
+        system_set_exec_alarm(EXEC_ALARM_HARD_LIMIT); // Indicate hard limit critical event
+      }
+#else
+      mc_reset(); // Initiate system kill.
+      system_set_exec_alarm(EXEC_ALARM_HARD_LIMIT); // Indicate hard limit critical event
+#endif
+    }
+  }
+}
+#endif
+
+
 
 // Homes the specified cycle axes, sets the machine position, and performs a pull-off motion after
 // completing. Homing is a special motion case, which involves rapid uncontrolled stops to locate
