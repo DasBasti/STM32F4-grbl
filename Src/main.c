@@ -618,10 +618,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SP_4_Pin SP_5_Pin SP_10_Pin SP_9_Pin 
-                           M_ORG_Pin */
-  GPIO_InitStruct.Pin = SP_4_Pin|SP_5_Pin|SP_10_Pin|SP_9_Pin 
-                          |M_ORG_Pin;
+  /*Configure GPIO pins : SP_4_Pin SP_5_Pin SP_10_Pin SP_9_Pin */
+  GPIO_InitStruct.Pin = SP_4_Pin|SP_5_Pin|SP_10_Pin|SP_9_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -703,6 +701,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : M_ORG_Pin */
+  GPIO_InitStruct.Pin = M_ORG_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(M_ORG_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : READY_OUT_Pin D_START_Pin HEAD_Pin ROT_Pin 
                            CENTERING_Pin */
