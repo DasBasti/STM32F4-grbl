@@ -4,6 +4,13 @@ This port of grbl v1.1 is based on grbl for STM32F103 by [MoonCactus](https://gi
 
 Used with this hardware [Interface Board](https://bitbucket.org/kurzschluss/stm286-interface-board/src/master/)
 
+TODO
+----
+* Vacuum Valve
+* Vacuum Sensor
+* Report Vacuum
+* Light On/Off
+
 Things to remember
 ------------------
 * To start remove M82 from start code in openpnp
