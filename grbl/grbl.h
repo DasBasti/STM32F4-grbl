@@ -67,7 +67,7 @@ void _delay_ms(uint32_t x);
 void _delay_us(uint32_t x);
 #define false 0
 #define true 1
-#define PORTPINDEF uint16_t
+#define PORTPINDEF uint32_t
 typedef int bool;
 //#define NOEEPROMSUPPORT
 #define printPgmString printString

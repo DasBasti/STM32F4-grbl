@@ -34,11 +34,12 @@
 #define SOME_LARGE_VALUE FLT_MAX
 
 // Axis array index values. Must start with 0 and be continuous.
-#define N_AXIS 4 // Number of axes
+#define N_AXIS 5 // Number of axes
 #define X_AXIS 0 // Axis indexing value.
 #define Y_AXIS 1
-#define A_AXIS 2
-#define B_AXIS 3
+#define Z_AXIS 2
+#define A_AXIS 3
+#define B_AXIS 4
 
 // For Placemat stepper we have CW and CCW step pulses.
 #define PLACEMAT_STEP_SET GPIO_PIN_SET

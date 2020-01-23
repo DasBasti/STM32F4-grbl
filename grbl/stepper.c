@@ -54,6 +54,7 @@ const PORTPINDEF step_pin_mask[N_AXIS] =
 {
 	1 << X_STEP_BIT,
 	1 << Y_STEP_BIT,
+	1 << Z_STEP_BIT,
 	1 << A_STEP_BIT,
 	1 << B_STEP_BIT,
 };
@@ -61,6 +62,7 @@ const PORTPINDEF direction_pin_mask[N_AXIS] =
 {
 	1 << X_DIRECTION_BIT,
 	1 << Y_DIRECTION_BIT,
+	1 << Z_DIRECTION_BIT,
 	1 << A_DIRECTION_BIT,
 	1 << B_DIRECTION_BIT,
 };
@@ -68,6 +70,9 @@ const PORTPINDEF limit_pin_mask[N_AXIS] =
 {
 	1 << X_LIMIT_BIT,
 	1 << Y_LIMIT_BIT,
+	1 << Z_LIMIT_BIT,
+	1 << A_LIMIT_BIT,
+	1 << B_LIMIT_BIT,
 };
 
 // Define Adaptive Multi-Axis Step-Smoothing(AMASS) levels and cutoff frequencies. The highest level
@@ -431,9 +436,16 @@ ISR(TIMER1_COMPA_vect)
   GPIO_Write(DIRECTION_PORT, (GPIO_ReadOutputData(DIRECTION_PORT) & ~DIRECTION_MASK) | (st.dir_outbits & DIRECTION_MASK));
   TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 #endif
-#ifdef STM32F407xx // set dir pins of aux stepper driver. X/Y stepper driver have a CW and CCW puls line that is served during stepping
-  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (st.dir_outbits & (1 << A_DIRECTION_BIT)));
-  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (st.dir_outbits & (1 << B_DIRECTION_BIT)));
+#ifdef STM32F407xx // set dir pins of aux stepper driver. X/Y stepper driver have a CW and CCW pulse line that is served during stepping
+  HAL_GPIO_WritePin(STP1_DIR_GPIO_Port, STP1_DIR_Pin, (st.dir_outbits & (1 << Z_DIRECTION_BIT)));
+
+  if(gc_state.tool == 0) { // Head 1 is selected
+	  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (st.dir_outbits & (1 << A_DIRECTION_BIT)));
+  }
+  else { // Head 2 is selected
+	  HAL_GPIO_WritePin(STP2_DIR_GPIO_Port, STP2_DIR_Pin, (st.dir_outbits & (1 << B_DIRECTION_BIT)));
+  }
+
 #endif
 
   // Then pulse the stepping pins

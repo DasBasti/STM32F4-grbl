@@ -25,7 +25,7 @@
 // arbitrary value, and some GUIs may require more. So we increased it based on a max safe
 // value when converting a float (7.2 digit precision)s to an integer.
 #define MAX_LINE_NUMBER 10000000
-#define MAX_TOOL_NUMBER 255 // Limited by max unsigned 8-bit value
+#define MAX_TOOL_NUMBER 2 // Limited by max 2 pick heads
 
 #define AXIS_COMMAND_NONE 0
 #define AXIS_COMMAND_NON_MODAL 1
@@ -296,15 +296,15 @@ uint8_t gc_execute_line(char *line)
            legal g-code words and stores their value. Error-checking is performed later since some
            words (I,J,K,L,P,R) have multiple connotations and/or depend on the issued commands. */
         switch(letter){
-          // case 'A': // Not supported
-          // case 'B': // Not supported
+          case 'A': word_bit = WORD_A; gc_block.values.c = value; axis_words |= (1<<A_AXIS); break; // Rotation
+          case 'B': word_bit = WORD_B; gc_block.values.c = value; axis_words |= (1<<A_AXIS); break;
           // case 'C': // Not supported
           // case 'D': // Not supported
           case 'F': word_bit = WORD_F; gc_block.values.f = value; break;
           // case 'H': // Not supported
           case 'I': word_bit = WORD_I; gc_block.values.ijk[X_AXIS] = value; ijk_words |= (1<<X_AXIS); break;
           case 'J': word_bit = WORD_J; gc_block.values.ijk[Y_AXIS] = value; ijk_words |= (1<<Y_AXIS); break;
-          //case 'K': word_bit = WORD_K; gc_block.values.ijk[Z_AXIS] = value; ijk_words |= (1<<Z_AXIS); break;
+          case 'K': word_bit = WORD_K; gc_block.values.ijk[Z_AXIS] = value; ijk_words |= (1<<Z_AXIS); break;
           case 'L': word_bit = WORD_L; gc_block.values.l = int_value; break;
           case 'N': word_bit = WORD_N; gc_block.values.n = truncf(value); break;
           case 'P': word_bit = WORD_P; gc_block.values.p = value; break;
@@ -318,7 +318,7 @@ uint8_t gc_execute_line(char *line)
 				break;
 		  case 'X': word_bit = WORD_X; gc_block.values.xyz[X_AXIS] = value; axis_words |= (1<<X_AXIS); break;
           case 'Y': word_bit = WORD_Y; gc_block.values.xyz[Y_AXIS] = value; axis_words |= (1<<Y_AXIS); break;
-          //case 'Z': word_bit = WORD_Z; gc_block.values.xyz[Z_AXIS] = value; axis_words |= (1<<Z_AXIS); break;
+          case 'Z': word_bit = WORD_Z; gc_block.values.xyz[Z_AXIS] = value; axis_words |= (1<<Z_AXIS); break;
           default: FAIL(STATUS_GCODE_UNSUPPORTED_COMMAND);
         }
 

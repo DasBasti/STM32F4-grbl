@@ -128,16 +128,18 @@ extern volatile uint32_t ioPort;
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
 #define X_STEP_BIT 0
 #define Y_STEP_BIT 1
-#define A_STEP_BIT 2
-#define B_STEP_BIT 3
-#define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << A_STEP_BIT) | (1 << B_STEP_BIT)) // All step bits
+#define Z_STEP_BIT 2
+#define A_STEP_BIT 3
+#define B_STEP_BIT 4
+#define STEP_MASK ((1 << X_STEP_BIT) | (1 << Y_STEP_BIT) | (1 << Z_STEP_BIT) | (1 << A_STEP_BIT)) // All step bits
 
 // Define step direction output pins. NOTE: All direction pins must be on the same port.
-#define X_DIRECTION_BIT 4
-#define Y_DIRECTION_BIT 5
-#define A_DIRECTION_BIT 6
-#define B_DIRECTION_BIT 7
-#define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << A_DIRECTION_BIT) | (1 << B_DIRECTION_BIT)) // All direction bits
+#define X_DIRECTION_BIT 5
+#define Y_DIRECTION_BIT 6
+#define Z_DIRECTION_BIT 7
+#define A_DIRECTION_BIT 8
+#define B_DIRECTION_BIT 9
+#define DIRECTION_MASK ((1 << X_DIRECTION_BIT) | (1 << Y_DIRECTION_BIT) | (1 << Z_DIRECTION_BIT) | (1 << A_DIRECTION_BIT)) // All direction bits
 
 // Define stepper driver enable/disable output pin.
 // We use HAL functions directly to disable the Stepper Pins from here. X/Y axis do not have enable pins.
@@ -153,14 +155,14 @@ extern volatile uint32_t ioPort;
 // Define homing/hard limit switch input pins and limit interrupt vectors.
 // NOTE: All limit bit pins must be on the same port
 // TODO: optimize this bit? or leave it if it works ok
-#define X_LIMIT_BIT 8
-#define Y_LIMIT_BIT 9
-#define Z_LIMIT_BIT 10
-#define A_LIMIT_BIT 11
-#define B_LIMIT_BIT 12
+#define X_LIMIT_BIT 10
+#define Y_LIMIT_BIT 11
+#define Z_LIMIT_BIT 12
+#define A_LIMIT_BIT 13
+#define B_LIMIT_BIT 14
 // Axis A/B do not have limit switches
 #define LIMIT_MASK ((1 << X_LIMIT_BIT) | (1 << Y_LIMIT_BIT) | (1 << Z_LIMIT_BIT) | (1 << A_LIMIT_BIT) | (1 << B_LIMIT_BIT)) // All limit bits
-#define IGNORE_LIMITS_BIT 13
+#define IGNORE_LIMITS_BIT 15
 
 // Define spindle enable and spindle direction output pins.
 #define SPINDLE_ENABLE_PORT GPIOB
@@ -228,20 +230,20 @@ extern volatile uint32_t ioPort;
 //   IO Port                                          Port B
 //   0      X_STEP_BIT
 //   1      Y_STEP_BIT
-//   2      A_STEP_BIT
-//   3		B_STEP_BIT
-//   4		X_DIRECTION_BIT
-//   5      Y_DIRECTION_BIT
-//   6      A_DIRECTION_BIT
-//   7		A_DIRECTION_BIT
-//   8		X_LIMIT
-//   9		Y_LIMIT
-//   10		Z_LIMIT
-//   11		A_LIMIT
-//   12		B_LIMIT
-//   13		IGNORE_LIMITS
-//   14
-//   15
+//	 2		Z_STEP_BIT
+//   3      A_STEP_BIT
+//   4		B_STEP_BIT
+//   5		X_DIRECTION_BIT
+//   6      Y_DIRECTION_BIT
+//   7      Z_DIRECTION_BIT
+//   8		A_DIRECTION_BIT
+//   9		B_DIRECTION_BIT
+//   10		X_LIMIT
+//   11		Y_LIMIT
+//   12		Z_LIMIT
+//   13		A_LIMIT
+//   14		B_LIMIT
+//   15		IGNORE_LIMITS
 //   16
 //   17
 //   18
