@@ -261,14 +261,15 @@ extern volatile uint32_t ioPort;
 //   31     CONTROL_RESET
 // NOTE: We include inline functions to convert from the hardware interface that grbl expects to one that is available in the machine
 
+#define ACTUATOR_LIMIT 10
 typedef struct{
 	GPIO_TypeDef *port;
 	uint8_t 	  pin;
 } gpio;
 
-extern gpio actuators[];
+extern gpio actuators[ACTUATOR_LIMIT];
 
-#define ACTUATE_PIN(PIN) (HAL_GPIO_WritePin(actuators[((int)PIN)].port, actuators[((int)PIN)].pin, GPIO_PIN_SET))
+#define ACTUATE_PIN(PIN) if( ((int)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((int)PIN)].port, actuators[((int)PIN)].pin, GPIO_PIN_SET);}
 
 #endif // CPU_MAP_STM32F4xx
 #endif
