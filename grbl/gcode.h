@@ -132,6 +132,9 @@
 	#define OVERRIDE_DISABLED  1 // Parking disabled.
 #endif
 
+#define ACTUATOR_CHANGE 1 // change the actuator given in P and S parameter
+#define ACTUATOR_HOLD   0 // keep actuator values
+
 // Modal Group G12: Active work coordinate system
 // N/A: Stores coordinate system value (54-59) to change to.
 
@@ -195,7 +198,8 @@ typedef struct {
   uint8_t program_flow;    // {M0,M1,M2,M30}
   uint8_t coolant;         // {M7,M8,M9}
   uint8_t spindle;         // {M3,M4,M5}
-	uint8_t override;        // {M56}
+  uint8_t override;        // {M56}
+  uint8_t actuate;	       // M42
 } gc_modal_t;
 
 typedef struct {

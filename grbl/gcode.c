@@ -280,7 +280,11 @@ uint8_t gc_execute_line(char *line)
 							gc_block.modal.override = OVERRIDE_PARKING_MOTION;
 							break;
 					#endif
-          default: FAIL(STATUS_GCODE_UNSUPPORTED_COMMAND); // [Unsupported M command]
+			case 42:
+				// actuate pin
+				gc_block.modal.actuate = ACTUATOR_CHANGE;
+			break;
+			default: FAIL(STATUS_GCODE_UNSUPPORTED_COMMAND); // [Unsupported M command]
         }
 
         // Check for more than one command per modal group violations in the current block
@@ -938,6 +942,7 @@ uint8_t gc_execute_line(char *line)
   } // else { pl_data->spindle_speed = 0.0; } // Initialized as zero already.
 
   // [5. Select tool ]: NOT SUPPORTED. Only tracks tool value.
+  // needed for dual head pick and place!
   gc_state.tool = gc_block.values.t;
 
   // [6. Change tool ]: NOT SUPPORTED
@@ -969,6 +974,13 @@ uint8_t gc_execute_line(char *line)
 		mc_override_ctrl_update(gc_state.modal.override);
 	}
 #endif
+
+  // [9.1 Actuator control ]: Actuate Pins set in CPU_MAP
+  if (gc_block.modal.actuate == ACTUATOR_CHANGE) {
+	  if ((int)gc_block.values.p != 0) {
+		  ACTUATE_PIN(gc_block.values.s);
+	  }
+  }
 
   // [10. Dwell ]:
   if (gc_block.non_modal_command == NON_MODAL_DWELL) { mc_dwell(gc_block.values.p); }

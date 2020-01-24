@@ -124,7 +124,6 @@
 // This 'PORT' is read and the correct pins are set high or low depending on the values in Timer3 ISR
 extern volatile uint32_t ioPort;
 
-
 // Define step pulse output pins. NOTE: All step bit pins must be on the same port.
 #define X_STEP_BIT 0
 #define Y_STEP_BIT 1
@@ -262,8 +261,14 @@ extern volatile uint32_t ioPort;
 //   31     CONTROL_RESET
 // NOTE: We include inline functions to convert from the hardware interface that grbl expects to one that is available in the machine
 
+typedef struct{
+	GPIO_TypeDef *port;
+	uint8_t 	  pin;
+} gpio;
 
-#endif // CPU_MAP_STM32F103
+extern gpio actuators[];
 
+#define ACTUATE_PIN(PIN) (HAL_GPIO_WritePin(actuators[((int)PIN)].port, actuators[((int)PIN)].pin, GPIO_PIN_SET))
 
+#endif // CPU_MAP_STM32F4xx
 #endif

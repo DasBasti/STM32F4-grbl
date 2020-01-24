@@ -52,6 +52,7 @@
 #include "grbl.h"
 
 #include "print.h"
+#include "cpu_map_stm32.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -110,6 +111,9 @@ static void MX_TIM14_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+gpio actuators[] = {
+		{.port = VAC_GPIO_Port, .pin= VAC_Pin}
+};
 
 /* USER CODE END 0 */
 
