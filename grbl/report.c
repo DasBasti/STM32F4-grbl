@@ -599,6 +599,17 @@ void report_realtime_status()
   }
 #endif
 
+#ifdef REPORT_FIELD_SENSORS
+  printPgmString(PSTR("|Sn:"));
+  for (uint8_t i = 0; i < sensors_limit; i++) {
+	  if(READ_PIN(i) {
+		  serial_write('1');
+	  } else {
+		  serial_write('0');
+	  }
+  }
+#endif
+
 #ifdef REPORT_FIELD_WORK_COORD_OFFSET
   if (sys.report_wco_counter > 0) { sys.report_wco_counter--; }
   else {
