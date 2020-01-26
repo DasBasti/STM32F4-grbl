@@ -114,7 +114,7 @@ static void MX_TIM14_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 // Actuators that can be controlled with M42
-gpio actuators[] = {
+const gpio actuators[] = {
 		{.port = VAC_GPIO_Port, .pin= VAC_Pin},
 		{.port = HEAD_GPIO_Port, .pin= HEAD_Pin},
 		{.port = ROT_GPIO_Port, .pin= ROT_Pin},
@@ -147,7 +147,12 @@ gpio actuators[] = {
 		{.port = A_CENT_GPIO_Port, .pin = A_CENT_Pin},
 		{.port = PULSE_GPIO_Port, .pin = PULSE_Pin},
 };
+const uint8_t actuators_limit = sizeof(actuators)/sizeof(gpio);
 
+const gpio sensors[] = {
+		{.port = VAC_SENS_GPIO_Port, .pin = VAC_SENS_Pin}
+};
+const uint8_t sensors_limit = sizeof(sensors)/sizeof(gpio);
 /* USER CODE END 0 */
 
 /**
