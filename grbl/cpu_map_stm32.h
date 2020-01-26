@@ -270,14 +270,16 @@ extern volatile uint32_t ioPort;
 
 typedef struct{
 	GPIO_TypeDef *port;
-	uint8_t 	  pin;
+	uint32_t 	  pin;
 } gpio;
 
 extern gpio actuators[ACTUATOR_LIMIT];
 extern gpio sensors[SENSOR_LIMIT];
 
-#define ACTUATE_PIN(PIN) if( ((int)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((int)PIN)].port, actuators[((int)PIN)].pin, GPIO_PIN_SET);}
-#define DEACTUATE_PIN(PIN) if( ((int)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((int)PIN)].port, actuators[((int)PIN)].pin, GPIO_PIN_RESET);}
+#define ACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_SET);}
+#define DEACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_RESET);}
+
+
 
 #endif // CPU_MAP_STM32F4xx
 #endif
