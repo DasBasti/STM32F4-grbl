@@ -112,7 +112,7 @@ static void MX_TIM14_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 gpio actuators[] = {
-		{.port = VAC_GPIO_Port, .pin= VAC_Pin}
+		{.port = VAC_GPIO_Port, .pin= VAC_Pin},
 };
 
 /* USER CODE END 0 */
@@ -219,6 +219,8 @@ int main(void)
 	report_init_message();
 	HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
   /* USER CODE END 2 */
+ 
+ 
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -541,7 +543,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, DATA_2_Pin|DATA_1_Pin|STROBE_Pin|DATA_4_Pin 
-                          |Y_CW_Pin|STP1_nEN_Pin|STP1_nSLP_Pin, GPIO_PIN_RESET);
+                          |STP1_nEN_Pin|STP1_nSLP_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, SPOT_Pin|PAT_L_Pin|HEAD_0_8_Pin, GPIO_PIN_RESET);
@@ -555,12 +557,21 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, RUN_Pin|D_HEAD_Pin|T_KNOCK_Pin|SPI3_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, OUTP_nEN_Pin|Y_CCW_Pin|X_CW_Pin|CW_CCW_Pin 
-                          |STP2_nEN_Pin|STP2_nSLP_Pin|STP2_DIR_Pin|STP1_DIR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(Y_CW_GPIO_Port, Y_CW_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, X_CCW_Pin|READY_OUT_Pin|D_START_Pin|VAC_Pin 
-                          |HEAD_Pin|ROT_Pin|CENTERING_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, OUTP_nEN_Pin|CW_CCW_Pin|STP2_nEN_Pin|STP2_nSLP_Pin 
+                          |STP2_DIR_Pin|STP1_DIR_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, Y_CCW_Pin|X_CW_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, READY_OUT_Pin|D_START_Pin|VAC_Pin|HEAD_Pin 
+                          |ROT_Pin|CENTERING_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, SP_G_Pin|SP_F_Pin|SP_E_Pin|SENSORDRV_Pin 
