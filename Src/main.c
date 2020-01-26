@@ -52,6 +52,8 @@
 #include "grbl.h"
 
 #include "print.h"
+
+#define ACTUATOR_LIMIT 31 // define 31 output pins for hardware M42 command
 #include "cpu_map_stm32.h"
 /* USER CODE END Includes */
 
@@ -111,11 +113,39 @@ static void MX_TIM14_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+// Actuators that can be controlled with M42
 gpio actuators[] = {
 		{.port = VAC_GPIO_Port, .pin= VAC_Pin},
 		{.port = HEAD_GPIO_Port, .pin= HEAD_Pin},
 		{.port = ROT_GPIO_Port, .pin= ROT_Pin},
 		{.port = CENTERING_GPIO_Port, .pin= CENTERING_Pin},
+		{.port = STROBE_GPIO_Port, .pin = STROBE_Pin},
+		{.port = STOPPER_GPIO_Port, .pin = STOPPER_Pin},
+		{.port = DATA_1_GPIO_Port, .pin = DATA_1_Pin},
+		{.port = DATA_2_GPIO_Port, .pin = DATA_2_Pin},
+		{.port = DATA_4_GPIO_Port, .pin = DATA_4_Pin},
+		{.port = VAC_08_GPIO_Port, .pin = VAC_08_Pin},
+		{.port = HEAD_0_8_GPIO_Port, .pin = HEAD_0_8_Pin},
+		{.port = D_HEAD_GPIO_Port, .pin = D_HEAD_Pin},
+		{.port = T_KNOCK_GPIO_Port, .pin = T_KNOCK_Pin},
+		{.port = SPOT_GPIO_Port, .pin = SPOT_Pin},
+		{.port = PAT_L_GPIO_Port, .pin = PAT_L_Pin},
+		{.port = READY_OUT_GPIO_Port, .pin = READY_OUT_Pin},
+		{.port = DSTART__GPIO_Port, .pin = DSTART__Pin},
+		{.port = CVY_M_GPIO_Port, .pin = CVY_M_Pin},
+		{.port = SUPPORTER_GPIO_Port, .pin = SUPPORTER_Pin},
+		{.port = LOCATOR_GPIO_Port, .pin = LOCATOR_Pin},
+		{.port = SP_A_GPIO_Port, .pin = SP_A_Pin},
+		{.port = SP_B_GPIO_Port, .pin = SP_B_Pin},
+		{.port = SP_C_GPIO_Port, .pin = SP_C_Pin},
+		{.port = SP_D_GPIO_Port, .pin = SP_D_Pin},
+		{.port = SP_E_GPIO_Port, .pin = SP_E_Pin},
+		{.port = SP_F_GPIO_Port, .pin = SP_F_Pin},
+		{.port = SP_G_GPIO_Port, .pin = SP_G_Pin},
+		{.port = SENSORDRV_GPIO_Port, .pin = SENSORDRV_Pin},
+		{.port = V_CNG_GPIO_Port, .pin = V_CNG_Pin},
+		{.port = A_CENT_GPIO_Port, .pin = A_CENT_Pin},
+		{.port = PULSE_GPIO_Port, .pin = PULSE_Pin},
 };
 
 /* USER CODE END 0 */
