@@ -494,9 +494,9 @@
 #define DEFAULT_Z_STEPS_PER_MM 200.0f // 400 stp/rot = 1/2 rot
 #define DEFAULT_A_STEPS_PER_MM 400.0f
 #define DEFAULT_B_STEPS_PER_MM 400.0f
-#define DEFAULT_X_MAX_RATE 2000.0f // mm/min
-#define DEFAULT_Y_MAX_RATE 2000.0f // mm/min
-#define DEFAULT_Z_MAX_RATE 2000.0f // mm/min
+#define DEFAULT_X_MAX_RATE 6000.0f // mm/min
+#define DEFAULT_Y_MAX_RATE 6000.0f // mm/min
+#define DEFAULT_Z_MAX_RATE 6000.0f // mm/min
 #define DEFAULT_A_MAX_RATE 600.0f // mm/min
 #define DEFAULT_B_MAX_RATE 600.0f // mm/min
 #define DEFAULT_X_ACCELERATION (45.0f*60*60) // 10*60*60 mm/min^2 = 10 mm/sec^2
@@ -509,7 +509,7 @@
 #define DEFAULT_Z_MAX_TRAVEL 50.0f // mm NOTE: Must be a positive value.
 #define DEFAULT_A_MAX_TRAVEL 50.0f // mm NOTE: Must be a positive value.
 #define DEFAULT_B_MAX_TRAVEL 50.0f // mm NOTE: Must be a positive value.
-#define DEFAULT_STEP_PULSE_MICROSECONDS 25
+#define DEFAULT_STEP_PULSE_MICROSECONDS 10
 #define DEFAULT_STEPPING_INVERT_MASK 0
 #define DEFAULT_DIRECTION_INVERT_MASK 3
 #define DEFAULT_STEPPER_IDLE_LOCK_TIME 255 // msec (0-254, 255 keeps steppers enabled)

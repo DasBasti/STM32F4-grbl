@@ -449,6 +449,14 @@ uint8_t gc_execute_line(char *line)
 	}
 #endif
 	
+  // [9.1 Actuators ]: Check for Actuator number and value
+  if (gc_block.modal.actuate == ACTUATOR_CHANGE) {
+	if (bit_isfalse(value_words, bit(WORD_P))) { FAIL(STATUS_GCODE_VALUE_WORD_MISSING); } // [P word missing]
+	bit_false(value_words, bit(WORD_P));
+	if (bit_isfalse(value_words, bit(WORD_S))) { FAIL(STATUS_GCODE_VALUE_WORD_MISSING); } // [S word missing]
+	bit_false(value_words, bit(WORD_S));
+  }
+
   // [10. Dwell ]: P value missing. P is negative (done.) NOTE: See below.
   if (gc_block.non_modal_command == NON_MODAL_DWELL) {
     if (bit_isfalse(value_words,bit(WORD_P))) { FAIL(STATUS_GCODE_VALUE_WORD_MISSING); } // [P word missing]
@@ -977,8 +985,10 @@ uint8_t gc_execute_line(char *line)
 
   // [9.1 Actuator control ]: Actuate Pins set in CPU_MAP
   if (gc_block.modal.actuate == ACTUATOR_CHANGE) {
-	  if ((int)gc_block.values.p != 0) {
-		  ACTUATE_PIN(gc_block.values.s);
+	  if ((int)gc_block.values.s != 0) {
+		  ACTUATE_PIN(gc_block.values.p);
+	  } else {
+		  DEACTUATE_PIN(gc_block.values.p);
 	  }
   }
 

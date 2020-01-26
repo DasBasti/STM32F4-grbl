@@ -270,6 +270,7 @@ typedef struct{
 extern gpio actuators[ACTUATOR_LIMIT];
 
 #define ACTUATE_PIN(PIN) if( ((int)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((int)PIN)].port, actuators[((int)PIN)].pin, GPIO_PIN_SET);}
+#define DEACTUATE_PIN(PIN) if( ((int)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((int)PIN)].port, actuators[((int)PIN)].pin, GPIO_PIN_RESET);}
 
 #endif // CPU_MAP_STM32F4xx
 #endif
