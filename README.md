@@ -37,7 +37,7 @@ GPIO Assignment Outputs
 13. SPOT - 
 14. PAT_L -
 15. READY_OUT -
-16. D_START -
+16. DSTART -
 17. CVY_M -
 18. SUPPORTER -
 19. LOCATOR - 
