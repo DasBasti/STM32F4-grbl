@@ -261,24 +261,19 @@ extern volatile uint32_t ioPort;
 //   31     CONTROL_RESET
 // NOTE: We include inline functions to convert from the hardware interface that grbl expects to one that is available in the machine
 
-#ifndef ACTUATOR_LIMIT
-#define ACTUATOR_LIMIT 31
-#endif
-#ifndef SENSOR_LIMIT
-#define SENSOR_LIMIT 31
-#endif
-
 typedef struct{
 	GPIO_TypeDef *port;
 	uint32_t 	  pin;
 } gpio;
 
-extern gpio actuators[ACTUATOR_LIMIT];
-extern gpio sensors[SENSOR_LIMIT];
+extern const gpio actuators[];
+extern const uint8_t actuators_limit;
+extern const gpio sensors[];
+extern const uint8_t sensors_limit;
 
-#define ACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_SET);}
-#define DEACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (ACTUATOR_LIMIT) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_RESET);}
-#define READ_PIN(PIN) (((uint32_t)PIN) < (ACTUATOR_LIMIT))?HAL_GPIO_ReadPin(sensors[((uint32_t)PIN)].port, sensors[((uint32_t)PIN)].pin):0;
+#define ACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (actuators_limit) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_SET);}
+#define DEACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (actuators_limit) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_RESET);}
+#define READ_PIN(PIN) HAL_GPIO_ReadPin(sensors[((uint32_t)PIN)].port, sensors[((uint32_t)PIN)].pin))
 
 
 
