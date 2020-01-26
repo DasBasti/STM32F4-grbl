@@ -6,7 +6,6 @@ Used with this hardware [Interface Board](https://bitbucket.org/kurzschluss/stm2
 
 TODO
 ----
-* Vacuum Valve
 * Vacuum Sensor
 * Report Vacuum
 * Light On/Off
@@ -19,6 +18,67 @@ Things to remember
 * For homing use endstop Y-L1 and X-L1.
 * Axis for 2-sided head: Up/Down: A, Rotation: B
 * Endstops available Up for both heads and rotation for both heads.
+
+GPIO Assignment Outputs
+-----------------------
+0. VAC - Vacuum valve - enable vacuum flow in machine
+1. HEAD - Head valve - enable vacuum flow in pick head 1
+2. ROT - Rotation valve - enable vacuum flow in pick head 2
+3. CENTERING -
+4. STROBE -
+5. STOPPER -
+6. DATA1 -
+7. DATA2 -
+8. DATA4 -
+9. VAC_08 -
+10. HEAD_08 -
+11. D_HEAD -
+12. T_KNOCK - Tape Knock - forward the feeder by pushing the button on it
+13. SPOT - 
+14. PAT_L -
+15. READY_OUT -
+16. D_START -
+17. CVY_M -
+18. SUPPORTER -
+19. LOCATOR - 
+20. SP_A -
+21. SP_B -
+22. SP_C -
+23. SP_D -
+24. SP_E -
+25. SP_F -
+26. SP_G -
+27. SENSORDRV -
+28. V_CNG -
+29. A_CENT -
+30. PULSE -
+
+GPIO Assignment Inputs (Sensors)
+----------------------
+0. VAC_SENSE - Vacuum sensor for machine wide vacuum
+1. T_HEAD - Vacuum sensor for pick head 1
+
+GPIO Assignments Buttons (Controll panel)
+* T_VAC - Vacuum button
+* T_HEAD - Head button
+* X_MINUS - X down button
+* X_PLUS - X up button
+* Y_MINUS - Y down button
+* Y_PLUS - Y up button
+* TEACH - Teach button
+* FAST - Fast button  in center of X/Y cross
+* HOME - Home button next to emergency stop
+
+GPIO Assignment Endstops
+------------------------
+* X_L1 - Endstop X-axis zero point
+* X_L2 - Endstop X-axis far end point
+* X_L3
+* X_L4
+* Y_L1 - Endstop Y-axis zero point
+* Y_L2 - Endstop Y-axis far end point
+* Y_L3
+* Y_L4
 
 Unused Signals from PM460
 -------------------------
