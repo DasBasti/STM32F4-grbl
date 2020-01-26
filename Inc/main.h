@@ -172,10 +172,10 @@ void Error_Handler(void);
 #define X_PLUS_GPIO_Port GPIOG
 #define DEG_90_Pin GPIO_PIN_8
 #define DEG_90_GPIO_Port GPIOG
-#define VCC_SENS_Pin GPIO_PIN_6
-#define VCC_SENS_GPIO_Port GPIOC
-#define HEAD_IN_Pin GPIO_PIN_7
-#define HEAD_IN_GPIO_Port GPIOC
+#define VAC_SENS_Pin GPIO_PIN_6
+#define VAC_SENS_GPIO_Port GPIOC
+#define HEAD_DN_Pin GPIO_PIN_7
+#define HEAD_DN_GPIO_Port GPIOC
 #define D_END_Pin GPIO_PIN_8
 #define D_END_GPIO_Port GPIOC
 #define READY_IN_Pin GPIO_PIN_9
@@ -194,8 +194,8 @@ void Error_Handler(void);
 #define SPI3_CS_GPIO_Port GPIOA
 #define READY_OUT_Pin GPIO_PIN_0
 #define READY_OUT_GPIO_Port GPIOD
-#define D_START_Pin GPIO_PIN_1
-#define D_START_GPIO_Port GPIOD
+#define DSTART__Pin GPIO_PIN_1
+#define DSTART__GPIO_Port GPIOD
 #define VAC_Pin GPIO_PIN_2
 #define VAC_GPIO_Port GPIOD
 #define HEAD_Pin GPIO_PIN_3

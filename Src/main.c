@@ -113,6 +113,9 @@ static void MX_TIM14_Init(void);
 /* USER CODE BEGIN 0 */
 gpio actuators[] = {
 		{.port = VAC_GPIO_Port, .pin= VAC_Pin},
+		{.port = HEAD_GPIO_Port, .pin= HEAD_Pin},
+		{.port = ROT_GPIO_Port, .pin= ROT_Pin},
+		{.port = CENTERING_GPIO_Port, .pin= CENTERING_Pin},
 };
 
 /* USER CODE END 0 */
@@ -570,7 +573,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(X_CCW_GPIO_Port, X_CCW_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, READY_OUT_Pin|D_START_Pin|VAC_Pin|HEAD_Pin 
+  HAL_GPIO_WritePin(GPIOD, READY_OUT_Pin|DSTART__Pin|VAC_Pin|HEAD_Pin 
                           |ROT_Pin|CENTERING_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -612,9 +615,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SP_3_Pin VCC_SENS_Pin HEAD_IN_Pin D_END_Pin 
+  /*Configure GPIO pins : SP_3_Pin VAC_SENS_Pin HEAD_DN_Pin D_END_Pin 
                            READY_IN_Pin */
-  GPIO_InitStruct.Pin = SP_3_Pin|VCC_SENS_Pin|HEAD_IN_Pin|D_END_Pin 
+  GPIO_InitStruct.Pin = SP_3_Pin|VAC_SENS_Pin|HEAD_DN_Pin|D_END_Pin 
                           |READY_IN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -723,9 +726,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(M_ORG_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : READY_OUT_Pin D_START_Pin HEAD_Pin ROT_Pin 
+  /*Configure GPIO pins : READY_OUT_Pin DSTART__Pin HEAD_Pin ROT_Pin 
                            CENTERING_Pin */
-  GPIO_InitStruct.Pin = READY_OUT_Pin|D_START_Pin|HEAD_Pin|ROT_Pin 
+  GPIO_InitStruct.Pin = READY_OUT_Pin|DSTART__Pin|HEAD_Pin|ROT_Pin 
                           |CENTERING_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
