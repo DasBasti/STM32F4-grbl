@@ -273,7 +273,7 @@ extern const uint8_t sensors_limit;
 
 #define ACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (actuators_limit) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_SET);}
 #define DEACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (actuators_limit) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_RESET);}
-#define READ_PIN(PIN) HAL_GPIO_ReadPin(sensors[((uint32_t)PIN)].port, sensors[((uint32_t)PIN)].pin))
+#define READ_PIN(PIN) HAL_GPIO_ReadPin(sensors[((uint32_t)PIN)].port, sensors[((uint32_t)PIN)].pin)
 
 
 
