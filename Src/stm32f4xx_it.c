@@ -290,33 +290,33 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 	  if(!HAL_GPIO_ReadPin(X_PLUS_GPIO_Port, X_PLUS_Pin)){
 		  if(HAL_GPIO_ReadPin(FAST_GPIO_Port, FAST_Pin)){
 			  // we go slow
-			  system_execute_line("$J=G91 X0.5 F500"); // jog 0.5mm
+			  system_execute_line("$J=G0 X0.5 F500"); // jog 0.5mm
 		  } else {
-			  system_execute_line("$J=G91 X1 F500"); // jog 1mm
+			  system_execute_line("$J=G0 X1 F500"); // jog 1mm
 		  }
 	  }
 	  if(!HAL_GPIO_ReadPin(X_MINUS_GPIO_Port, X_MINUS_Pin)){
 		  if(HAL_GPIO_ReadPin(FAST_GPIO_Port, FAST_Pin)){
 			  // we go slow
-			  system_execute_line("$J=G91 X-0.5 F500"); // jog 0.5mm
+			  system_execute_line("$J=G0 X-0.5 F500"); // jog 0.5mm
 		  } else {
-			  system_execute_line("$J=G91 X-1 F500"); // jog 1mm
+			  system_execute_line("$J=G0 X-1 F500"); // jog 1mm
 		  }
 	  }
 	  if(!HAL_GPIO_ReadPin(Y_PLUS_GPIO_Port, Y_PLUS_Pin)){
 		  if(HAL_GPIO_ReadPin(FAST_GPIO_Port, FAST_Pin)){
 			  // we go slow
-			  system_execute_line("$J=G91 Y0.5 F500"); // jog 0.5mm
+			  system_execute_line("$J=G0 Y0.5 F500"); // jog 0.5mm
 		  } else {
-			  system_execute_line("$J=G91 Y1 F500"); // jog 1mm
+			  system_execute_line("$J=G0 Y1 F500"); // jog 1mm
 		  }
 	  }
 	  if(!HAL_GPIO_ReadPin(Y_MINUS_GPIO_Port, Y_MINUS_Pin)){
 		  if(HAL_GPIO_ReadPin(FAST_GPIO_Port, FAST_Pin)){
 			  // we go slow
-			  system_execute_line("$J=G91 Y-0.5 F500"); // jog 0.5mm
+			  system_execute_line("$J=G0 Y-0.5 F500"); // jog 0.5mm
 		  } else {
-			  system_execute_line("$J=G91 Y-1 F500"); // jog 1mm
+			  system_execute_line("$J=G0 Y-1 F500"); // jog 1mm
 		  }
 	  }
   }
