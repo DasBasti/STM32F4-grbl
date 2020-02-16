@@ -279,6 +279,8 @@ void st_wake_up()
   st.step_pulse_time = -(((settings.pulse_microseconds - 2)*TICKS_PER_MICROSECOND) >> 3);
 #elif defined(STM32F103C8)
   st.step_pulse_time = (settings.pulse_microseconds)*TICKS_PER_MICROSECOND;
+#elif defined(STM32F407xx)
+  st.step_pulse_time = (settings.pulse_microseconds)*TICKS_PER_MICROSECOND;
 #endif
   #endif
 

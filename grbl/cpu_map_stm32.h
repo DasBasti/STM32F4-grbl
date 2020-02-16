@@ -264,6 +264,7 @@ extern volatile uint32_t ioPort;
 typedef struct{
 	GPIO_TypeDef *port;
 	uint32_t 	  pin;
+	unsigned char key;
 } gpio;
 
 extern const gpio actuators[];
@@ -274,6 +275,7 @@ extern const uint8_t sensors_limit;
 #define ACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (actuators_limit) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_SET);}
 #define DEACTUATE_PIN(PIN) if( ((uint32_t)PIN) < (actuators_limit) ){HAL_GPIO_WritePin(actuators[((uint32_t)PIN)].port, actuators[((uint32_t)PIN)].pin, GPIO_PIN_RESET);}
 #define READ_PIN(PIN) HAL_GPIO_ReadPin(sensors[((uint32_t)PIN)].port, sensors[((uint32_t)PIN)].pin)
+#define PIN_TO_CHAR(PIN) sensors[((uint32_t)PIN)].key
 
 
 
