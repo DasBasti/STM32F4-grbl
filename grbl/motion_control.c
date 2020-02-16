@@ -197,6 +197,7 @@ void mc_dwell(float seconds)
   if (sys.state == STATE_CHECK_MODE) { return; }
   protocol_buffer_synchronize();
   delay_sec(seconds, DELAY_MODE_DWELL);
+  //report_status_message(STATUS_OK);
 }
 
 

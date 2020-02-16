@@ -111,7 +111,7 @@ uint8_t read_float(char *line, uint8_t *char_counter, float *float_ptr)
 // Non-blocking delay function used for general operation and suspend features.
 void delay_sec(float seconds, uint8_t mode)
 {
-	uint16_t i = (uint16_t)ceilf(1000 / DWELL_TIME_STEP*seconds);
+	uint16_t i = (uint16_t)ceilf(1000 / DWELL_TIME_STEP*(seconds/1000));
 	while (i-- > 0) {
 		if (sys.abort) { return; }
 		if (mode == DELAY_MODE_DWELL) {

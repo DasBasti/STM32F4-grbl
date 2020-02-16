@@ -324,7 +324,6 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
   if(led++ == 500){
 	  HAL_GPIO_TogglePin(RUN_GPIO_Port, RUN_Pin);
 	  led = 0;
-	  system_set_exec_state_flag(EXEC_STATUS_REPORT);
   }
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */
 }
