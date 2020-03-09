@@ -71,6 +71,9 @@ extern UART_HandleTypeDef huart2;
 extern uint8_t rx_byte;
 extern void processUARTByte (void);
 extern volatile uint32_t ioPort;
+uint8_t reporting;
+extern system_t sys;
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -324,6 +327,14 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
   if(led++ == 500){
 	  HAL_GPIO_TogglePin(RUN_GPIO_Port, RUN_Pin);
 	  led = 0;
+	  if (sys.state != STATE_IDLE)
+		  reporting = 1;
+	  if(reporting) {
+		  system_set_exec_state_flag(EXEC_STATUS_REPORT);
+		  if (sys.state == STATE_IDLE) {
+			  reporting = 0;
+		  }
+	  }
   }
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */
 }
